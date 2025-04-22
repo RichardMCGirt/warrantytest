@@ -413,6 +413,20 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
     } catch (error) {
         console.error("❌ Error occurred:", error);
     }
+
+    document.getElementById("material-not-needed").addEventListener("change", function () {
+        const materialsInput = document.getElementById("materials-needed");
+        if (this.checked) {
+            materialsInput.value = "Material Not Needed";
+            materialsInput.setAttribute("readonly", true);
+            materialsInput.style.backgroundColor = "#e9ecef";
+        } else {
+            materialsInput.value = "";
+            materialsInput.removeAttribute("readonly");
+            materialsInput.style.backgroundColor = "";
+        }
+    });
+    
     
     async function ensureDropboxToken() {
         if (!dropboxAccessToken) {
