@@ -15,15 +15,15 @@
     <div class="job-details-container">
         <form id="job-form">
             <label for="field-status">Status</label>
-            <input type="text" id="field-status" name="field-status" disabled>
+            <input type="text" id="field-status" name="field-status" readonly>
 
-            <input type="text" id="job-name" disabled>
+            <input type="text" id="job-name" readonly>
        
             <label>Field Technician:</label>
-            <input type="text" id="field-tech" disabled>
+            <input type="text" id="field-tech" readonly>
             
             <label for="warranty-id">Warranty ID</label>
-            <input type="text" id="warranty-id" disabled>
+            <input type="text" id="warranty-id" readonly>
 
             <label for="StartDate">Start Date</label>
             <input type="datetime-local" id="StartDate" name="StartDate" data-field="StartDate" >
@@ -55,13 +55,13 @@
                     placeholder="Click for Directions">
             </div>
             <label>Homeowner Name:</label>
-            <input type="text" id="homeowner-name" disabled>
+            <input type="text" id="homeowner-name" readonly>
 
             <label>Contact Email:</label>
-<input type="email" id="contact-email" data-field="Contact Email" disabled>
+<input type="email" id="contact-email" data-field="Contact Email" readonly>
 
 <label>Description:</label>
-<textarea id="description" data-field="Description of Issue" disabled ></textarea>
+<textarea id="description" data-field="Description of Issue" readonly ></textarea>
 
 <label>DOW to be Completed:</label>
 <textarea id="dow-completed" data-field="DOW to be Completed" 

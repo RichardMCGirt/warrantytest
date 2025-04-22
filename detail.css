@@ -177,8 +177,8 @@ textarea {
     
 }
 
-input[disabled],
-textarea[disabled] {
+input[readonly],
+textarea[readonly] {
     cursor: not-allowed;
     color: #008080 !important; 
     background-color: transparent !important;
@@ -626,7 +626,7 @@ button:hover {
     }
   
     #save-job {
-        bottom: 10px; /* Move the save button closer to the bottom */
+        bottom: 10px; 
         padding: 12px 16px;
         font-size: 16px;
     }
@@ -643,9 +643,11 @@ button:hover {
     }
   }
   @media (max-width: 480px) {
-    input[disabled],
-    textarea[disabled] {
+    input[readonly],
+    textarea[readonly] {
         font-size: 1rem; /* adjust as needed */
         padding: 0.75em;
+        color: #008080 !important; 
+
     }
 }
