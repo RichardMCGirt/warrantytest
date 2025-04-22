@@ -195,7 +195,7 @@ td {
 table {
     table-layout: fixed;
 
-    width: 100%;
+    width: 90%;
     margin: 10px auto;
     border-collapse: collapse;
     background-color: #fff;
@@ -295,9 +295,7 @@ button:hover {
 
 /* Search Input */
 .search-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+   left: 50%;
 }
 
 #search-input {
