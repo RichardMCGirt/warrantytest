@@ -319,7 +319,7 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                     "Materials Needed": document.getElementById("materials-needed").value,
                     "Field Tech Reviewed": document.getElementById("field-tech-reviewed").checked,
                     "Job Completed": document.getElementById("job-completed").checked,
-                    "Material Not Needed": document.getElementById("material-not-needed").checked,
+             //       "Material Not Needed": document.getElementById("material-not-needed").checked,
 
                 };
         
@@ -414,18 +414,18 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
         console.error("❌ Error occurred:", error);
     }
 
-    document.getElementById("material-not-needed").addEventListener("change", function () {
-        const materialsInput = document.getElementById("materials-needed");
-        if (this.checked) {
-            materialsInput.value = "Material Not Needed";
-            materialsInput.setAttribute("readonly", true);
-            materialsInput.style.backgroundColor = "#e9ecef";
-        } else {
-            materialsInput.value = "";
-            materialsInput.removeAttribute("readonly");
-            materialsInput.style.backgroundColor = "";
-        }
-    });
+   // document.getElementById("material-not-needed").addEventListener("change", function () {
+     //   const materialsInput = document.getElementById("materials-needed");
+     //   if (this.checked) {
+       //     materialsInput.value = "Material Not Needed";
+        //    materialsInput.setAttribute("readonly", true);
+       //     materialsInput.style.backgroundColor = "#e9ecef";
+      //  } else {
+      //      materialsInput.value = "";
+      //      materialsInput.removeAttribute("readonly");
+     //       materialsInput.style.backgroundColor = "";
+    //    }
+ //   });
     
     
     async function ensureDropboxToken() {
@@ -749,7 +749,7 @@ async function populatePrimaryFields(job) {
     setInputValue("StartDate", convertUTCToLocalInput(job["StartDate"]));
     setInputValue("EndDate", convertUTCToLocalInput(job["EndDate"]));
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
-    setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
+  //  setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
 
     // ✅ Set dropdown's data-selected attribute for use in dropdown population
     const subDropdown = document.getElementById("subcontractor-dropdown");

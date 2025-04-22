@@ -143,24 +143,26 @@
         <input type="checkbox" id="field-review-not-needed" data-field="Field Review Needed">
     </div>
 
-    <div class="material-not-needed-container"
+    <div class="material-needed-container"
     style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh;">
-   <label for="material-not-needed" style="margin-bottom: 5px; font-size: 18px; font-weight: 500;">
-       Material Not Needed:
-   </label>
-   <input type="checkbox" id="material-not-needed" data-field="Material Not Needed" style="transform: scale(1.5);">
+    <label for="material-needed-select" style="margin-bottom: 5px; font-size: 18px; font-weight: 500;">
+        Materials Required?
+    </label>
+    <select id="material-needed-select" data-field="Material Not Needed"
+        style="font-size: 16px; padding: 5px 10px; border-radius: 5px;">
+        <option value="Do Not Need Materials">Do Not Need Materials</option>
+        <option value="Need Materials">Need Materials</option>
+    </select>
 </div>
 
-    
-    
-    <div class="form-group">
-        <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
-        <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
-        style="width: 100%; max-width: 100%; font-size: 16px; padding: 10px; 
-               box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; 
+<div class="form-group" id="materials-needed-container" style="display: none;">
+    <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
+    <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
+        style="width: 100%; max-width: 100%; font-size: 16px; padding: 10px;
+               box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;
                min-height: fit-content; resize: vertical;"
         autocomplete="off" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
-        </div>
+</div>
 
        
         
@@ -223,7 +225,19 @@
            AIRTABLE_SUBCONTRACTOR_TABLE_NAME: 'tbl9SgC5wUi2TQuF7' // ✅ Added this for subcontractors
         };
     </script>
-   
+   <script>
+    document.getElementById("material-needed-select").addEventListener("change", function () {
+        const selectedValue = this.value;
+        const textareaContainer = document.getElementById("materials-needed-container");
+
+        if (selectedValue === "Need Materials") {
+            textareaContainer.style.display = "block";
+        } else {
+            textareaContainer.style.display = "none";
+        }
+    });
+</script>
+
     
     <script src="job-details.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
