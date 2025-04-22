@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details</title>
+    <link rel="stylesheet" href="detail.css">
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-button"> Back to Job List</a>
+    </nav>
+    <div class="scrollable-content">
+    <div class="job-details-container">
+        <form id="job-form">
+            <label for="field-status">Status</label>
+            <input type="text" id="field-status" name="field-status" disabled>
+
+            <input type="text" id="job-name" disabled>
+       
+            <label>Field Technician:</label>
+            <input type="text" id="field-tech" disabled>
+            
+            <label for="warranty-id">Warranty ID</label>
+            <input type="text" id="warranty-id" disabled>
+
+            <label for="StartDate">Start Date</label>
+            <input type="datetime-local" id="StartDate" name="StartDate" data-field="StartDate" >
+            
+            <label for="EndDate">End Date</label>
+            <input type="datetime-local" id="EndDate" name="EndDate" data-field="EndDate" >
+            
+            <label>Address:</label>
+            <div style="display: flex; align-items: center; justify-content: left; gap: 10px;">
+                <input type="text" id="address" readonly 
+                    style="
+                        cursor: pointer; 
+                        background-color: #f8f9fa; 
+                        border: 2px solid #007BFF; 
+                        border-radius: 10px; 
+                        font-size: 18px; 
+                        text-align: center; 
+                        padding: 14px; 
+                        width: 100%; 
+                        max-width: 600px; 
+                        outline: none;
+                        font-weight: bold;
+                        color: #333;
+                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-in-out;"
+                    onclick="openMapApp()"
+                    onmouseover="this.style.backgroundColor='#e0f2ff'; this.style.boxShadow='0px 4px 12px rgba(0, 123, 255, 0.3)'; this.style.transform='scale(1.02)';"
+                    onmouseout="this.style.backgroundColor='#f8f9fa'; this.style.boxShadow='0px 4px 8px rgba(0, 0, 0, 0.1)'; this.style.transform='scale(1)';"
+                    placeholder="Click for Directions">
+            </div>
+            <label>Homeowner Name:</label>
+            <input type="text" id="homeowner-name" disabled>
+
+            <label>Contact Email:</label>
+<input type="email" id="contact-email" data-field="Contact Email" disabled>
+
+<label>Description:</label>
+<textarea id="description" data-field="Description of Issue" disabled ></textarea>
+
+<label>DOW to be Completed:</label>
+<textarea id="dow-completed" data-field="DOW to be Completed" 
+          style="width: 100%; max-width: 100%; font-size: 16px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; min-height: 80px; resize: vertical;"
+          autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"></textarea>
+
+          <hr>
+
+<label id="subcontractor-dropdown1-label" for="subcontractor-dropdown1">Select a Subcontractor:</label>
+<select id="subcontractor-dropdown" data-field="Subcontractor">
+    <option value="">Select a Subcontractor...</option>
+</select>
+
+<div class="sub-completed-container">
+    <label for="sub-not-needed">Sub not needed:</label>
+    <input type="checkbox" id="sub-not-needed" data-field="Subcontractor Not Needed">
+    
+</div>
+<br>
+
+    <label for="subcontractor-payment">Subcontractor Payment</label>
+    <input type="number" id="subcontractor-payment" name="subcontractor-payment" step="0.01" min="0" placeholder="$0.00" data-field="Subcontractor Payment">
+
+
+
+<div id="previewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+    background-color:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
+  <div id="previewContent" style="background:#fff; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow:auto;">
+    <span id="closePreview" style="position:absolute; top:20px; right:30px; font-size:30px; cursor:pointer; color:white;">&times;</span>
+  </div>
+</div>
+
+
+
+<div id="additional-fields-container" style="padding: 16px;">
+    <div class="form-group">
+      <label for="billable-status" style="font-size: 18px; font-weight: 600; display: block; margin-bottom: 8px;">
+        Billable Status
+      </label>
+      <div id="billable-status-container">
+        <label class="billable-label">
+          <input type="radio" name="billable-status" value="Billable" data-field="Billable/ Non Billable" />
+          Billable
+        </label>
+        <label class="billable-label">
+          <input type="radio" name="billable-status" value="Non Billable" data-field="Billable/ Non Billable" />
+          Non-Billable
+        </label>
+      </div>
+    </div>
+ 
+        <div class="form-group" id="homeowner-builder-container" style="display: none;">
+            <label for="homeowner-builder">Homeowner/Builder Pay</label>
+            <select id="homeowner-builder" name="homeowner-builder" data-field="Homeowner Builder pay">
+                <option value="Homeowner">Homeowner</option>
+                <option value="Subcontractor">Subcontractor</option>
+                <option value="Builder">Builder</option>
+            </select>
+        </div>
+        
+</div>
+<div class="form-group" id="billable-reason-container" style="display: none;">
+    <label for="billable-reason">Billable Reason</label>
+    <select id="billable-reason" name="billable-reason" data-field="Billable Reason (If Billable)">
+        <option value="Another Trade Damaged Work">Another Trade Damaged Work</option>
+        <option value="Homeowner Damage">Homeowner Damage</option>
+        <option value="Framing Issue">Framing Issue</option>
+        <option value="Weather">Weather</option>
+    </select>
+</div>
+
+    <div id="message-container"></div>
+    <div class="form-group" style="display: none;">
+        <label>Field Review Not Needed:</label>
+        <input type="checkbox" id="field-review-needed" data-field="Field Review Not Needed">
+    </div>
+    
+    <div class="form-group" style="display: none;">
+        <label>Field Review Needed:</label>
+        <input type="checkbox" id="field-review-not-needed" data-field="Field Review Needed">
+    </div>
+    
+    <div class="form-group">
+        <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
+        <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
+        style="width: 100%; max-width: 100%; font-size: 16px; padding: 10px; 
+               box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; 
+               min-height: 100px; resize: vertical;"
+        autocomplete="off" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
+        </div>
+        <div class="file-input-container">
+            <label id="upload-issue-picture-label" class="custom-file-label" for="upload-issue-picture">
+                Upload Issue Pictures
+              </label>
+                          <input type="file" id="upload-issue-picture" multiple accept="image/*" style="display: none;">
+            <div id="issue-file-list"></div>
+        </div>
+
+        <div id="issue-pictures" style="display: none;"></div>
+<br>
+
+<div class="form-group centered-checkbox">
+    <label id="field-tech-reviewed-label" for="field-tech-reviewed">Field Tech Reviewed:</label>
+    <input type="checkbox" id="field-tech-reviewed" data-field="Field Tech Reviewed">
+</div>
+
+    <!-- Preview area for uploaded images -->
+    <div id="file-preview" class="file-preview"></div>
+
+
+    <div id="file-input-container">
+        <label class="custom-file-label" for="upload-completed-picture">Upload Completed Pictures</label>
+        <input type="file" id="upload-completed-picture" multiple accept="image/*" style="display: none;">
+        <div id="file-list"></div>
+    </div>
+    
+
+<!-- Preview area for uploaded images -->
+<div id="completed-pictures" class="file-preview" style="display: none;"></div>
+
+<button id="delete-images-btn" 
+    style="background:red; color:white; padding:10px; border:none; cursor:pointer; display: none;">
+    Delete Selected Images
+</button>
+
+<div class="job-completed-container">
+    <label id="job-completed" for="job-completed">Job Completed:</label>
+    <input type="checkbox" id="job-completed-check" data-field="Job Completed">
+</div>
+<div id="file-preview" class="file-preview"></div>
+
+</div>
+
+<button type="button" id="save-job">Save Changes</button>
+
+        </form>
+    </div>
+
+    <script>
+        window.env = {
+           AIRTABLE_API_KEY: 'patM49mmBDFbP6y2n.545e1307aae93d7bd5fd579bc395039d43fece72fa6df5085bae343817d614ff',
+           AIRTABLE_BASE_ID: 'appO21PVRA4Qa087I',
+           AIRTABLE_TABLE_NAME: 'tbl6EeKPsNuEvt5yJ',
+           AIRTABLE_TABLE_NAME2: 'tbl9SgC5wUi2TQuF7',
+
+           AIRTABLE_SUBCONTRACTOR_TABLE_NAME: 'tbl9SgC5wUi2TQuF7' // ✅ Added this for subcontractors
+        };
+    </script>
+   
+    
+    <script src="job-details.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+
+</body>
+</html>
