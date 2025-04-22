@@ -32,9 +32,9 @@ This application allows field technicians to manage job details, upload images t
 
 ## ✅ Usage
 
-1. Serve `job-details.html` from a static web server.
+1. Serve `https://warranty-updates.vanirinstalledsales.info/` from a static web server.
 2. The page automatically fetches the job using `?id=recXXXXXX` in the URL.
-3. All form fields will be populated and editable depending on job status.
+3. Form fields will be populated and editable depending on job status.
 4. Technicians can upload photos, adjust details, and save the job.
 5. If status becomes `Material Purchase Needed`, it redirects to job list.
 
@@ -42,7 +42,7 @@ This application allows field technicians to manage job details, upload images t
 
 - Use `getWarrantyId()` to consistently reference the record ID.
 - The app uses `MutationObserver` to detect image DOM changes and update delete buttons accordingly.
-- Computed fields like `Warranty Record ID` are filtered out before sending data to Airtable.
+- Computed field `Warranty Record ID` are filtered out before sending data to Airtable.
 - File uploads to Dropbox automatically generate a shared link and update Airtable with direct download links.
 
 ## 🧪 Debugging Tips

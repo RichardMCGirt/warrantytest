@@ -129,8 +129,12 @@ td[data-field="Lot Number and Community/Neighborhood"]:active {
 }
 
 h2 {
+    display: block;
+    width: 100%;
     text-align: center;
+    margin: 20px 0;
 }
+
 
 td {
     max-height: 100px;
@@ -189,7 +193,9 @@ td {
 
 /* Table Styles */
 table {
-    width: 95%;
+    table-layout: fixed;
+
+    width: 100%;
     margin: 10px auto;
     border-collapse: collapse;
     background-color: #fff;
@@ -204,8 +210,9 @@ th, td {
     white-space: normal;
     overflow-wrap: break-word;
     word-break: keep-all;
-    width: fit-content;
+    width: auto;
     font-size: 22px;
+    white-space: normal;
 
 }
 
