@@ -180,7 +180,7 @@ textarea {
 input[disabled],
 textarea[disabled] {
     cursor: not-allowed;
-    color: #555 !important; 
+    color: #008080 !important; 
     background-color: transparent !important;
     border: none;               /* darker text for readability */
 }
