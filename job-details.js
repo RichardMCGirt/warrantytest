@@ -318,7 +318,9 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                     "Subcontractor Payment": parseFloat(document.getElementById("subcontractor-payment").value) || 0,
                     "Materials Needed": document.getElementById("materials-needed").value,
                     "Field Tech Reviewed": document.getElementById("field-tech-reviewed").checked,
-                    "Job Completed": document.getElementById("job-completed").checked
+                    "Job Completed": document.getElementById("job-completed").checked,
+                    "Material Not Needed": document.getElementById("material-not-needed").checked,
+
                 };
         
                 // ✅ Add dates only if they changed
@@ -733,6 +735,7 @@ async function populatePrimaryFields(job) {
     setInputValue("StartDate", convertUTCToLocalInput(job["StartDate"]));
     setInputValue("EndDate", convertUTCToLocalInput(job["EndDate"]));
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
+    setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
 
     // ✅ Set dropdown's data-selected attribute for use in dropdown population
     const subDropdown = document.getElementById("subcontractor-dropdown");
