@@ -572,7 +572,7 @@ input[type="file"] {
     flex-direction: column; /* Places items in a vertical stack */
     align-items: center; /* Centers items horizontally */
     text-align: center; /* Ensures text is centered */
-    margin: 20px auto; /* Centers the container horizontally */
+    margin: 10px auto; /* Centers the container horizontally */
     gap:10px;
 }
 
