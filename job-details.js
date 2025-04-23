@@ -607,7 +607,9 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
         // Step 1️⃣ Try exact match
         const filterFormula = `{Warranty Record ID} = "${warrantyId}"`;
     const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/${window.env.AIRTABLE_TABLE_NAME}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=1`;
-
+    console.log("🔎 Airtable Filter Formula:", filterFormula);
+    console.log("🌐 Request URL:", url);
+    
     try {
         const response = await fetch(url, {
             headers: { Authorization: `Bearer ${window.env.AIRTABLE_API_KEY}` }
@@ -647,15 +649,15 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
     
             // ✅ If not a record ID, find the corresponding record ID
             if (!recordId.startsWith("rec")) {
-                console.log("🔍 Searching for Record ID using Warranty Record ID...");
-                recordId = await getRecordIdByWarrantyId(lotNameOrRecordId);
-                if (!recordId) {
-                    console.error("❌ No record ID found for this Lot Name. Cannot update Airtable.");
-                    showToast("❌ Error: No record found for this Lot Name.", "error");
-                    if (saveButton) saveButton.disabled = false;
+                const resolvedId = await getRecordIdByWarrantyId(recordId);
+                if (!resolvedId) {
+                    alert(`No record found with Warranty Record ID: ${recordId}`);
+                    console.warn("❌ No record found for Warranty Record ID:", recordId);
                     return;
                 }
+                recordId = resolvedId;
             }
+            
     
             const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/${tableName}/${recordId}`;
             console.log("📡 Sending API Request to Airtable:", url);
