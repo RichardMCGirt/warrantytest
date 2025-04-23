@@ -64,9 +64,12 @@
 <textarea id="description" data-field="Description of Issue" readonly ></textarea>
 
 <label>DOW to be Completed:</label>
-<textarea id="dow-completed" data-field="DOW to be Completed" 
-          style="min-width: 100%; width:fit-content ; font-size: 16px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; min-height: 80px; resize: vertical;"
-          autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"></textarea>
+<textarea id="dow-completed" data-field="DOW to be Completed"
+    style="width: 100%; font-size: 16px; padding: 10px;
+           box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;
+           min-height: 80px; resize: vertical; display: block;"
+    autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"></textarea>
+
 
           <hr>
 
@@ -122,6 +125,8 @@
         </div>
         
 </div>
+
+<br>
 <div class="form-group" id="billable-reason-container" style="display: none;">
     <label for="billable-reason">Billable Reason</label>
     <select id="billable-reason" name="billable-reason" data-field="Billable Reason (If Billable)">
@@ -143,32 +148,31 @@
         <input type="checkbox" id="field-review-not-needed" data-field="Field Review Needed">
     </div>
 
-    <div class="material-needed-container"
-    style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh;">
+    <div id="material-needed-container" class="material-needed-container"
+    style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px 0;">
+
     <label for="material-needed-select" style="margin-bottom: 5px; font-size: 18px; font-weight: 500;">
-        Materials Required?
     </label>
+    <br>
     <select id="material-needed-select" 
-    style="width: fit-content; font-size: 20px; padding: 5px 10px; border-radius: 5px; box-sizing: border-box;">
-    <option value="" disabled selected>Select if materials are needed</option>
-    <option value="Do Not Need Materials">Do Not Need Materials</option>
-    <option value="Needs Materials">Needs Materials</option>
-</select>
+        style="width: fit-content; font-size: 20px; padding: 5px 10px; border-radius: 5px; box-sizing: border-box;">
+        <option value="" disabled selected>Select if materials are needed</option>
+        <option value="Do Not Need Materials">Do Not Need Materials</option>
+        <option value="Needs Materials">Needs Materials</option>
+    </select>
 
-
-</div>
-
-<div class="form-group" id="materials-needed-container" >
-    <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
-    <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
-        style="width: 100%; max-width: 100%; font-size: 16px; padding: 10px;
-                    box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;
-               min-height: fit-content; resize: vertical;"
+    <div class="form-group" id="materials-needed-container">
+        <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
+        <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
+        style="width: 100%; font-size: 20px; padding: 10px;
+               box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;
+               min-height: 80px; resize: vertical; display: block;"
         autocomplete="off" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
+    
+    </div>
 </div>
 
-       
-        
+   
 
         <div class="file-input-container">
             <label id="upload-issue-picture-label" class="custom-file-label" for="upload-issue-picture">

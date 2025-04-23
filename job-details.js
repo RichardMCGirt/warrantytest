@@ -816,12 +816,24 @@ if (materialsTextarea && materialSelect && textareaContainer) {
         console.log("🚨 Job is 'Scheduled - Awaiting Field' - Deleting completed images...");
 
         [
-            "billable-status", "homeowner-builder", "subcontractor", "materials-needed", 
-            "billable-reason", "field-review-not-needed", "field-review-needed", 
-            "field-tech-reviewed", "additional-fields-container", "message-container", 
-            "materials-needed-label", "upload-issue-picture-label", 
-            "field-tech-reviewed-label" // 👈 Add this
+            "billable-status",
+            "homeowner-builder",
+            "subcontractor",
+            "materials-needed",
+            "billable-reason",
+            "field-review-not-needed",
+            "field-review-needed",
+            "field-tech-reviewed",
+            "additional-fields-container",
+            "message-container",
+            "materials-needed-label",
+            "upload-issue-picture-label",
+            "field-tech-reviewed-label",
+            "materials-needed-container",
+            "material-needed-container" // 👈 added this
           ].forEach(hideElementById);
+          
+          
           
           if (job["Status"] !== "Field Tech Review Needed") {
             hideParentFormGroup("field-tech-reviewed");
