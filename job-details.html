@@ -150,14 +150,15 @@
     </label>
     <select id="material-needed-select" 
     style="width: fit-content; font-size: 20px; padding: 5px 10px; border-radius: 5px; box-sizing: border-box;">
-
+    <option value="" disabled selected>Select if materials are needed</option>
     <option value="Do Not Need Materials">Do Not Need Materials</option>
-    <option value="Need Materials">Need Materials</option>
+    <option value="Needs Materials">Needs Materials</option>
 </select>
+
 
 </div>
 
-<div class="form-group" id="materials-needed-container" style="display: none;">
+<div class="form-group" id="materials-needed-container" >
     <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
     <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
         style="width: 100%; max-width: 100%; font-size: 16px; padding: 10px;
@@ -224,21 +225,49 @@
            AIRTABLE_TABLE_NAME: 'tbl6EeKPsNuEvt5yJ',
            AIRTABLE_TABLE_NAME2: 'tbl9SgC5wUi2TQuF7',
 
-           AIRTABLE_SUBCONTRACTOR_TABLE_NAME: 'tbl9SgC5wUi2TQuF7' // ✅ Added this for subcontractors
+           AIRTABLE_SUBCONTRACTOR_TABLE_NAME: 'tbl9SgC5wUi2TQuF7' 
         };
     </script>
-   <script>
-    document.getElementById("material-needed-select").addEventListener("change", function () {
-        const selectedValue = this.value;
-      const textareaContainer = document.getElementById("materials-needed-container");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const materialSelect = document.getElementById("material-needed-select");
+  const materialsTextarea = document.getElementById("materials-needed");
+  const textareaContainer = document.getElementById("materials-needed-container");
 
-        if (selectedValue === "Need Materials") {
-           textareaContainer.style.display = "block";
-       } else {
-            textareaContainer.style.display = "none";
-       }
-    });
-</script>
+  const placeholderOption = materialSelect.querySelector('option[value=""]');
+
+  // Show/hide textarea when user changes selection
+    // Show/hide textarea when user changes selection with confirmation
+    materialSelect.addEventListener("change", function () {
+    console.log("🔄 Dropdown changed to:", this.value);
+
+    if (this.value === "Needs Materials") {
+      console.log("📂 Showing materials-needed textarea");
+      textareaContainer.style.display = "block";
+    } else if (this.value === "Do Not Need Materials") {
+      if (materialsTextarea.value.trim() !== "") {
+        const confirmed = confirm("⚠️ You have entered materials. Do you want to clear them?");
+        if (confirmed) {
+          console.log("🧹 User confirmed clearing materials textarea.");
+          materialsTextarea.value = "";
+          textareaContainer.style.display = "none";
+        } else {
+          console.log("❌ User canceled. Reverting dropdown to 'Needs Materials'");
+          this.value = "Needs Materials";
+          textareaContainer.style.display = "block"; // show again in case it was hidden
+        }
+      } else {
+        console.log("📁 Hiding textarea (no content to clear)");
+        textareaContainer.style.display = "none";
+      }
+    }
+  });
+
+});
+  </script>
+  
+  
+  
 
     
     <script src="job-details.js"></script>

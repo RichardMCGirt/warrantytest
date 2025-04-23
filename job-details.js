@@ -752,6 +752,52 @@ async function populatePrimaryFields(job) {
     setInputValue("EndDate", convertUTCToLocalInput(job["EndDate"]));
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
   //  setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
+  setTimeout(() => {
+    const materialsTextarea = document.getElementById("materials-needed");
+    const materialSelect = document.getElementById("material-needed-select");
+
+    if (materialsTextarea && materialsTextarea.value.trim() !== "") {
+        let exists = Array.from(materialSelect.options).some(opt => opt.value === "Needs Materials");
+        if (!exists) {
+            const option = document.createElement("option");
+            option.value = "Needs Materials";
+            option.textContent = "Needs Materials";
+            materialSelect.appendChild(option);
+        }
+        materialSelect.value = "Needs Materials";
+    }
+
+    updateMaterialsTextareaVisibility(); // ← ✅ toggle visibility after value is set
+}, 50); // slight delay to ensure dropdown is in DOM
+
+  // 🔄 Auto-set dropdown to "Needs Materials" if textarea has content
+const materialsTextarea = document.getElementById("materials-needed");
+const materialSelect = document.getElementById("material-needed-select");
+const textareaContainer = document.getElementById("materials-needed-container");
+
+if (materialsTextarea && materialSelect && textareaContainer) {
+    const value = materialsTextarea.value.trim();
+    console.log("📦 Materials Needed value:", value);
+
+    if (value !== "") {
+        // Ensure "Needs Materials" option exists
+        let hasNeedsMaterials = Array.from(materialSelect.options).some(opt => opt.value === "Needs Materials");
+        if (!hasNeedsMaterials) {
+            const option = document.createElement("option");
+            option.value = "Needs Materials";
+            option.textContent = "Needs Materials";
+            materialSelect.appendChild(option);
+            console.log("➕ Added 'Needs Materials' option to dropdown.");
+        }
+
+        materialSelect.value = "Needs Materials";
+        textareaContainer.style.display = "block";
+        console.log("✅ Set dropdown to 'Needs Materials' and showed textarea.");
+    } else {
+        console.log("📭 Textarea is empty, leaving dropdown as is.");
+    }
+}
+
 
     // ✅ Set dropdown's data-selected attribute for use in dropdown population
     const subDropdown = document.getElementById("subcontractor-dropdown");
@@ -875,6 +921,20 @@ function hideParentFormGroup(elementId) {
     }
 }
 
+function updateMaterialsTextareaVisibility() {
+    const materialSelect = document.getElementById("material-needed-select");
+    const textareaContainer = document.getElementById("materials-needed-container");
+
+    if (!materialSelect || !textareaContainer) return;
+
+    if (materialSelect.value === "Needs Materials") {
+        console.log("📂 Showing materials-needed textarea based on dropdown");
+        textareaContainer.style.display = "block";
+    } else {
+        console.log("📁 Hiding materials-needed textarea based on dropdown");
+        textareaContainer.style.display = "none";
+    }
+}
 
 
 
@@ -1333,6 +1393,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🆔 Using saved Record ID:", recordId);
     saveRecordIdToLocal(recordId); 
     setTimeout(checkAndHideDeleteButton, 500); // slight delay if images render async
+    document.getElementById("material-needed-select").addEventListener("change", updateMaterialsTextareaVisibility);
 
 });
 
