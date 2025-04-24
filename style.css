@@ -191,9 +191,15 @@ td {
     transition: opacity 1s ease-in-out;
 }
 
+td[data-field="b"] {
+    display: none !important;
+  }
+  
+
 /* Table Styles */
 table {
     table-layout: fixed;
+    min-width: 90%;
 
     width: 90%;
     margin: 10px auto;
@@ -215,6 +221,11 @@ th, td {
     white-space: normal;
 
 }
+
+.hidden-column {
+    display: none !important;
+  }
+  
 
 th {
     background-color: #002244;
