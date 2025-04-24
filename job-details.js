@@ -227,44 +227,26 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
         // Apply subcontractor logic on load
         toggleSubcontractorField();
 
-        // Event listener for subcontractor checkbox
-        subcontractorCheckbox.addEventListener("change", () => {
-            toggleSubcontractorField();
-        
-            const status = document.getElementById("field-status")?.value || "";
-            const normalizedStatus = status.toLowerCase().trim();
-        
-            console.log("📦 Subcontractor checkbox changed");
-            console.log("🔍 Raw status:", status);
-            console.log("🔍 Normalized status:", normalizedStatus);
-        
-            if (
-                normalizedStatus === "scheduled- awaiting field" ||
-                normalizedStatus === "scheduled awaiting field"
-            ) {
-                console.log("🚫 Status requires hiding completed fields. Hiding now...");
-        
-                [
-                    "completed-pictures",
-                    "upload-completed-picture",
-                    "completed-pictures-heading",
-                    "job-completed-container",
-                    "job-completed",
-                    "job-completed-check"
-                ].forEach(id => {
-                    console.log(`🔒 Hiding element with ID: ${id}`);
-                    hideElementById(id);
-                });
-            } else {
-                console.log("✅ Status does not require hiding completed fields.");
-            }
-        });
+     
         
         
         console.log("🎯 Subcontractor logic fully integrated!");
         
         /** ✅ Add Event Listener for Save Button **/
         saveButton.addEventListener("click", async function () {
+            const scrollPosition = window.scrollY;
+
+            const requiredFields = ["job-name", "StartDate", "EndDate"];
+            for (const id of requiredFields) {
+              const el = document.getElementById(id);
+              if (el && !el.value.trim()) {
+                el.focus();
+                showToast(`⚠️ Please fill out ${id.replace("-", " ")}`, "error");
+                return;
+              }
+            }
+          
+
             console.log("💾 Save button clicked!");
             const warrantyId = getWarrantyId(); // <-- ensure this is defined BELOW getWarrantyId()
             if (!warrantyId) {
@@ -339,9 +321,13 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                 }
         
                 // ✅ Handle subcontractor logic
-                jobData["Subcontractor"] = subcontractorCheckbox.checked
-                    ? "Sub Not Needed"
-                    : subcontractorDropdown.value.trim() || "";
+                const selectedSub = subcontractorDropdown.value.trim();
+if (subcontractorCheckbox.checked) {
+    jobData["Subcontractor"] = "Sub Not Needed";
+} else if (selectedSub !== "") {
+    jobData["Subcontractor"] = selectedSub;
+}
+
         
                 console.log("📤 Sending updated fields to Airtable:", jobData);
                 console.log("🔎 Sending Billable value:", updatedFields["Billable/ Non Billable"]);
@@ -381,28 +367,41 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
             console.log("🔍 Raw status:", status);
             console.log("🔍 Normalized status:", normalizedStatus);
         
-            if (
+            const shouldHideCompleted = 
                 normalizedStatus === "scheduled- awaiting field" ||
-                normalizedStatus === "scheduled awaiting field"
-            ) {
-                console.log("🚫 Status requires hiding completed fields. Hiding now...");
+                normalizedStatus === "scheduled awaiting field";
         
-                [
-                    "completed-pictures",
-                    "upload-completed-picture",
-                    "completed-pictures-heading",
-                    "job-completed-container",
-                    "job-completed",
-                    "job-completed-check"
-                ].forEach(id => {
+            const elementsToToggle = [
+                "completed-pictures",
+                "upload-completed-picture",
+                "completed-pictures-heading",
+                "job-completed-container",
+                "job-completed",
+                "job-completed-check"
+            ];
+        
+            elementsToToggle.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) {
+                    console.warn(`⚠️ Element not found: ${id}`);
+                    return;
+                }
+        
+                if (shouldHideCompleted) {
                     console.log(`🔒 Hiding element with ID: ${id}`);
-                    hideElementById(id);
-                });
-            } else {
-                console.log("✅ Status does not require hiding completed fields.");
-            }
+                    el.style.display = "none";
+                    el.style.margin = "0";
+                    el.style.padding = "0";
+                    el.style.height = "0";
+                } else {
+                    console.log(`🔓 Showing element with ID: ${id}`);
+                    el.style.display = "block";
+                    el.style.removeProperty("margin");
+                    el.style.removeProperty("padding");
+                    el.style.removeProperty("height");
+                }
+            });
         });
-        
         
         console.log("🎯 Subcontractor logic fully integrated!");
         
@@ -480,24 +479,29 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
     });
     
     document.getElementById("upload-issue-picture").addEventListener("change", async function (event) {
-        if (await ensureDropboxToken()) {
-            showToast("📤 Uploading image...", "info"); // Show upload start toast
+        if (event.target.files.length > 0) {
+          if (await ensureDropboxToken()) {
+            showToast("📤 Uploading issue photo...", "info");
             await uploadToDropbox(event.target.files, "Picture(s) of Issue");
-            showToast("✅ Image uploaded successfully!", "success"); // Show success toast
-        } else {
-            showToast("❌ Failed to authenticate Dropbox!", "error"); // Show error toast
+            showToast("✅ Photo uploaded successfully!", "success");
+          } else {
+            showToast("❌ Dropbox authentication failed!", "error");
+          }
         }
-    });
-    
-    document.getElementById("upload-completed-picture").addEventListener("change", async function (event) {
-        if (await ensureDropboxToken()) {
-            showToast("📤 Uploading image...", "info"); // Show upload start toast
+      });
+      
+      document.getElementById("upload-completed-picture").addEventListener("change", async function (event) {
+        if (event.target.files.length > 0) {
+          if (await ensureDropboxToken()) {
+            showToast("📤 Uploading completed photo...", "info");
             await uploadToDropbox(event.target.files, "Completed  Pictures");
-            showToast("✅ Image uploaded successfully!", "success"); // Show success toast
-        } else {
-            showToast("❌ Failed to authenticate Dropbox!", "error"); // Show error toast
+            showToast("✅ Photo uploaded successfully!", "success");
+          } else {
+            showToast("❌ Dropbox authentication failed!", "error");
+          }
         }
-    });
+      });
+      
 
     const labels = document.querySelectorAll('.billable-label');
     let lastSelectedBillable = null;
@@ -681,17 +685,31 @@ const sanitizedFields = Object.fromEntries(
   });
   
 
-            if (!response.ok) {
-                const error = await response.json();
-                console.error("❌ Airtable update error:", error);
-            }
-            
-    
-            if (!response.ok) {
-                const errorDetails = await response.json(); // Extract error response
-                showToast(`❌ Airtable error: ${errorDetails.error?.message || 'Unknown error'}`, "error");
-                return;
-            }
+  if (!response.ok) {
+    let errorDetails;
+    try {
+        errorDetails = await response.json();
+    } catch (jsonErr) {
+        console.error("❌ Failed to parse Airtable error JSON:", jsonErr);
+        const text = await response.text();
+        console.error("📄 Raw response body:", text);
+        showToast("❌ Error updating Airtable: Unable to parse error response", "error");
+        return;
+    }
+
+    console.group("📛 Airtable Update Error Details");
+    console.error("❌ Status Code:", response.status);
+    console.error("❌ Status Text:", response.statusText);
+    console.error("❌ Error Type:", errorDetails.error?.type || "Unknown");
+    console.error("❌ Error Message:", errorDetails.error?.message || "No message provided");
+    console.error("📦 Full Error Object:", errorDetails);
+    console.groupEnd();
+
+    showToast(`❌ Airtable error: ${errorDetails.error?.message || 'Unknown error'}`, "error");
+    return;
+}
+
+
     
             console.log("✅ Airtable record updated successfully:", fields);
             showToast("✅ Record updated successfully!", "success");
@@ -774,6 +792,8 @@ async function populatePrimaryFields(job) {
 const materialsTextarea = document.getElementById("materials-needed");
 const materialSelect = document.getElementById("material-needed-select");
 const textareaContainer = document.getElementById("materials-needed-container");
+const homeownerBuilderSelect = document.getElementById("homeowner-builder");
+const homeownerBuilderContainer = homeownerBuilderSelect?.parentElement;
 
 if (materialsTextarea && materialSelect && textareaContainer) {
     const value = materialsTextarea.value.trim();
@@ -797,7 +817,6 @@ if (materialsTextarea && materialSelect && textareaContainer) {
         console.log("📭 Textarea is empty, leaving dropdown as is.");
     }
 }
-
 
     // ✅ Set dropdown's data-selected attribute for use in dropdown population
     const subDropdown = document.getElementById("subcontractor-dropdown");
@@ -860,13 +879,18 @@ if (materialsTextarea && materialSelect && textareaContainer) {
         
             // 🔄 Show or hide the Billable Reason dropdown
             const billableReasonDiv = document.getElementById("billable-reason-container");
-            if (radio.checked && radio.value === "Billable") {
-                billableReasonDiv.style.display = "block";
-                console.log("📄 Showing Billable Reason dropdown.");
-            } else if (billableReasonDiv) {
-                billableReasonDiv.style.display = "none";
-                console.log("🙈 Hiding Billable Reason dropdown.");
+            if (radio.checked) {
+                if (radio.value === "Billable") {
+                    billableReasonDiv.style.display = "block";
+                    homeownerBuilderContainer.style.display = "block";
+                    console.log("📄 Showing Billable Reason and Homeowner/Builder dropdowns.");
+                } else {
+                    billableReasonDiv.style.display = "none";
+                    homeownerBuilderContainer.style.display = "none";
+                    console.log("🙈 Hiding Billable Reason and Homeowner/Builder dropdowns.");
+                }
             }
+            
         });
         
 
@@ -925,7 +949,6 @@ function checkAndHideDeleteButton() {
     }
 }
 
-
 function hideParentFormGroup(elementId) {
     const el = document.getElementById(elementId);
     if (el && el.closest(".form-group")) {
@@ -948,8 +971,6 @@ function updateMaterialsTextareaVisibility() {
     }
 }
 
-
-
 // Function to hide an element safely
 function hideElementById(elementId) {
     const element = document.getElementById(elementId);
@@ -963,8 +984,6 @@ function hideElementById(elementId) {
     element.style.padding = "0";    // reset padding
     element.style.height = "0";     // if it's a block element that may take height
 }
-
-
 
 // Function to resize any textarea dynamically
 function adjustTextareaSize(id) {
@@ -1175,8 +1194,6 @@ document.getElementById("delete-images-btn").addEventListener("click", async fun
         return;
     }
 
- 
-
     // 🔹 Extract selected image IDs
     const imageIdsToDelete = Array.from(checkboxes).map(cb => cb.dataset.imageId).filter(id => id);
     console.log("📌 Selected Image IDs to Delete:", imageIdsToDelete);
@@ -1217,7 +1234,7 @@ async function deleteImagesByLotName(warrantyId, imageIdsToDelete, imageField) {
             console.error("❌ Warranty ID is missing.");
             return;
         }
-        let existingImages = await fetchCurrentImagesFromAirtable(warrantyId, targetField);
+        let existingImages = await fetchCurrentImagesFromAirtable(warrantyId, imageField);
         
         if (!existingImages || existingImages.length === 0) {
             console.warn(`⚠️ No images found in '${imageField}'. Nothing to delete.`);
@@ -1438,6 +1455,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("save-job").addEventListener("click", async function () {
+        const scrollPosition = window.scrollY; // ✅ Add this as your first line
+
         console.log("🔄 Save button clicked. Collecting all field values...");
     
         const warrantyId = getWarrantyId();
@@ -1496,32 +1515,36 @@ document.addEventListener("DOMContentLoaded", () => {
         if (convertedEndUTC !== originalEndUTC) {
             updatedFields["EndDate"] = convertedEndUTC;
         }
-                const inputs = document.querySelectorAll("input:not([disabled]), textarea:not([disabled]), select:not([disabled])");
-    
-                inputs.forEach(input => {
-                    const fieldName = input.getAttribute("data-field");
-                    if (!fieldName) return;
-                
-                    // ✅ Skip Billable radio buttons — already handled above
-                    if (input.name === "billable-status") return;
-                
-                    let value = input.value.trim();
-                
-                    if (input.type === "checkbox") {
-                        value = input.checked;
-                    } else if (input.tagName === "SELECT") {
-                        value = value === "" ? null : value;
-                    }
-                     else if (input.type === "number") {
-                        value = value === "" ? null : parseFloat(value);
-                    } else if (input.type === "date") {
-                        value = formatDateToISO(value);
-                    } else {
-                        value = value === "" ? null : value;
-                    }
-                
-                    updatedFields[fieldName] = value;
-                });
+        const inputs = document.querySelectorAll("input:not([disabled]), textarea:not([disabled]), select:not([disabled])");
+
+        inputs.forEach(input => {
+            const fieldName = input.getAttribute("data-field");
+            if (!fieldName) return;
+        
+            if (input.name === "billable-status") return;
+        
+            let value = input.value.trim();
+        
+            if (input.type === "checkbox") {
+                value = input.checked;
+            } else if (input.tagName === "SELECT") {
+                if (value === "") return; // ⛔️ Skip sending if select is empty
+                value = value;
+            }
+            else if (input.type === "number") {
+                value = value === "" || isNaN(value) ? null : parseFloat(value);
+            } else if (input.type === "date") {
+                value = formatDateToISO(value);
+            } else {
+                value = value === "" ? null : value;
+            }
+        
+            updatedFields[fieldName] = value;
+        });
+        
+        
+        
+        
                 
 
         // Clean empty strings to nulls (avoid Airtable errors)
@@ -1532,12 +1555,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (typeof value === "undefined") delete updatedFields[key];
             if (typeof value === "number" && isNaN(value)) delete updatedFields[key];
         
-            // ✅ NEW FIX — Remove `null` values for number fields
-            if (value === null) {
-                if (["Subcontractor Payment"].includes(key)) {
-                    delete updatedFields[key];
-                }
-            }
+
         }
         
         
@@ -1552,6 +1570,8 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             // ✅ Update Airtable with cleaned values
             await updateAirtableRecord(window.env.AIRTABLE_TABLE_NAME, warrantyId, updatedFields);
+            window.scrollTo({ top: scrollPosition, behavior: "instant" });
+
             console.log("✅ Airtable record updated successfully.");
             console.log("🕔 UTC Sent to Airtable:", new Date(document.getElementById("StartDate").value).toISOString());
 
@@ -1811,7 +1831,7 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
     
         const warrantyId = getWarrantyId();
 
-        let existingImages = await fetchCurrentImagesFromAirtable(warrantyId, targetField);
+        let existingImages = await fetchCurrentImagesFromAirtable(warrantyId, targetField); // ✅
         const uploadedUrls = [...existingImages];
     
         for (const file of files) {
