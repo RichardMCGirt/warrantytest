@@ -121,6 +121,8 @@
             <select id="homeowner-builder" name="homeowner-builder" data-field="Homeowner Builder pay">
                 <option value="Homeowner">Homeowner</option>
                 <option value="Builder">Builder</option>
+                <option value=""></option>
+
             </select>
         </div>
         
@@ -134,6 +136,8 @@
         <option value="Homeowner Damage">Homeowner Damage</option>
         <option value="Framing Issue">Framing Issue</option>
         <option value="Weather">Weather</option>
+        <option value=""></option>
+
     </select>
 </div>
 
@@ -173,11 +177,21 @@
    
 
         <div class="file-input-container">
-            <label id="upload-issue-picture-label" class="custom-file-label" for="upload-issue-picture">
+         <!--   <label id="upload-issue-picture-label" class="custom-file-label" for="upload-issue-picture">
                 Upload Issue Pictures
-              </label>
-                          <input type="file" id="upload-issue-picture" multiple accept="image/*" style="display: none;">
-            <div id="issue-file-list"></div>
+              </label> -->
+              <input
+              type="file"
+              id="upload-issue-picture"
+              multiple
+              accept="image/*"
+              capture="environment"
+              style="display: none;"
+            >
+            <button id="trigger-issue-upload" type="button" style="margin: 10px; padding: 10px 15px; font-size: 16px;">
+              📷 Take Photo / Upload Issue Image
+            </button>       
+                 <div id="issue-file-list"></div>
         </div>
 
         <div id="issue-pictures" style="display: none;"></div>
@@ -193,9 +207,19 @@
 
 
     <div id="file-input-container">
-        <label class="custom-file-label" for="upload-completed-picture">Upload Completed Pictures</label>
-        <input type="file" id="upload-completed-picture" multiple accept="image/*" style="display: none;">
-        <div id="file-list"></div>
+      <!--  <label class="custom-file-label" for="upload-completed-picture">Upload Completed Pictures</label> -->
+        <input
+        type="file"
+        id="upload-completed-picture"
+        multiple
+        accept="image/*"
+        capture="environment"
+        style="display: none;"
+      >
+      <button id="trigger-completed-upload" type="button" style="margin: 10px; padding: 10px 15px; font-size: 16px;">
+        📷 Take Photo / Upload Completed Image
+      </button>        
+      <div id="file-list"></div>
     </div>
     
 
@@ -238,7 +262,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const placeholderOption = materialSelect.querySelector('option[value=""]');
 
-  // Show/hide textarea when user changes selection
     // Show/hide textarea when user changes selection with confirmation
     materialSelect.addEventListener("change", function () {
     console.log("🔄 Dropdown changed to:", this.value);
@@ -268,6 +291,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
   </script>
   
+  <script>
+    document.getElementById("trigger-issue-upload").addEventListener("click", () => {
+      document.getElementById("upload-issue-picture").click();
+    });
+  
+    document.getElementById("trigger-completed-upload").addEventListener("click", () => {
+      document.getElementById("upload-completed-picture").click();
+    });
+  </script>
   
   
 
