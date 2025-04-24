@@ -1,4 +1,6 @@
 let dropboxRefreshToken = null;
+let updatedFields = {}; // begin fresh field collection
+let recordData = null; // 🔓 Global scope
 
 
 function openMapApp() {
@@ -275,7 +277,6 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
         
                 const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
                 const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
-                const updatedFields = {}; // add this above all field assignments
 
                 const selectedBillable = document.querySelector('input[name="billable-status"]:checked');
                 if (!selectedBillable) {
@@ -344,7 +345,6 @@ if (subcontractorCheckbox.checked) {
 
                 if (refreshed) {
                     await populatePrimaryFields(refreshed.fields);
-                    showToast("✅ Job saved successfully!", "success");
                 }
         
             } catch (err) {
@@ -425,7 +425,11 @@ if (subcontractorCheckbox.checked) {
      //       materialsInput.style.backgroundColor = "";
     //    }
  //   });
-    
+ function normalizeISOString(dateString) {
+    if (!dateString) return null;
+    return new Date(dateString).toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
+}
+
     
     async function ensureDropboxToken() {
         if (!dropboxAccessToken) {
@@ -712,8 +716,59 @@ const sanitizedFields = Object.fromEntries(
 
     
             console.log("✅ Airtable record updated successfully:", fields);
-            showToast("✅ Record updated successfully!", "success");
-    
+            function formatReadableDate(isoString) {
+                if (!isoString) return "";
+            
+                const localDate = new Date(isoString);
+                const mm = String(localDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(localDate.getDate()).padStart(2, '0');
+                const yyyy = localDate.getFullYear();
+                const hours = String(localDate.getHours()).padStart(2, '0');
+                const minutes = String(localDate.getMinutes()).padStart(2, '0');
+            
+                return `${mm}/${dd}/${yyyy} ${hours}:${minutes}`;
+            }
+            
+            
+            function formatToastChanges(changes) {
+                return Object.entries(changes)
+                    .map(([key, val]) => {
+                        // ✅ Convert field key to readable label
+                        const label = key
+                            .replace(/([A-Z])/g, ' $1')     // Add space before capital letters
+                            .replace(/[/]/g, ' / ')         // Clean slashes
+                            .replace(/\s+/g, ' ')           // Normalize multiple spaces
+                            .trim();
+            
+                        // ✅ Format value based on type
+                        let displayValue;
+                        if (val === null || val === "") {
+                            displayValue = "❌ Cleared";
+                        } else if (typeof val === "boolean") {
+                            displayValue = val ? "✅" : "⬜️";
+                        } else if (key === "StartDate" || key === "EndDate") {
+                            displayValue = formatReadableDate(val);
+                        } else {
+                            displayValue = val;
+                        }
+            
+                        // ✅ Return formatted line
+                        return `<div style="padding-left: 8px; margin-bottom: 4px;">
+                                    <strong>${label}:</strong> ${displayValue}
+                                </div>`;
+                    }).join("");
+            }
+            
+            
+            const changesHtml = formatToastChanges(updatedFields);
+            const toastMessage = `<div style="text-align: left;"><strong> Record updated successfully!</strong><br>${changesHtml}</div>`;
+            showToast(toastMessage, "success");
+            
+            
+            updatedFields = {};
+
+
+              
         } catch (error) {
             console.error("❌ Error updating Airtable:", error);
         } finally {
@@ -905,7 +960,6 @@ if (materialsTextarea && materialSelect && textareaContainer) {
     if (job["Status"] === "Field Tech Review Needed") {
         console.log("🚨 Field Tech Review Needed - Hiding completed job elements.");
     
-        // Hide specified elements
         [
             "completed-pictures",
             "upload-completed-picture",
@@ -913,8 +967,10 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             "file-input-container",
             "job-completed-container",
             "job-completed",
-            "job-completed-check"
+            "job-completed-check",
+            "trigger-completed-upload" // 👈 add this line
         ].forEach(hideElementById);
+        
 
         if (job["Status"] !== "Field Tech Review Needed") {
             hideParentFormGroup("field-tech-reviewed");
@@ -1454,6 +1510,41 @@ document.addEventListener("DOMContentLoaded", () => {
         
     });
 
+  // ✅ Already defined above:
+  const originalStartUTC = recordData?.fields?.["StartDate"];
+  const originalEndUTC = recordData?.fields?.["EndDate"];
+  
+
+const currentStartLocal = document.getElementById("StartDate")?.value;
+const currentEndLocal = document.getElementById("EndDate")?.value;
+
+const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
+const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
+
+// ✅ Round both to the nearest minute to prevent false positive changes
+function toRoundedMinutes(dateStr) {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    date.setSeconds(0, 0);
+    return date.getTime();
+}
+
+const originalStartMs = toRoundedMinutes(originalStartUTC);
+const currentStartMs = toRoundedMinutes(currentStartLocal);
+
+if (originalStartMs !== currentStartMs) {
+    updatedFields["StartDate"] = convertedStartUTC;
+}
+
+const originalEndMs = toRoundedMinutes(originalEndUTC);
+const currentEndMs = toRoundedMinutes(currentEndLocal);
+
+if (originalEndMs !== currentEndMs) {
+    updatedFields["EndDate"] = convertedEndUTC;
+}
+
+    
+
     document.getElementById("save-job").addEventListener("click", async function () {
         const scrollPosition = window.scrollY; // ✅ Add this as your first line
 
@@ -1478,28 +1569,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         console.log("🕒 Saving StartDate:", document.getElementById("StartDate").value);
 
-        const currentRecord = await fetchAirtableRecord(airtableTableName, recordId);
-        const originalStartUTC = currentRecord?.fields?.["StartDate"];
-        const originalEndUTC = currentRecord?.fields?.["EndDate"];
-                
-        const currentStartLocal = document.getElementById("StartDate")?.value;
-        const currentEndLocal = document.getElementById("EndDate")?.value;
+   
         
-        const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
-        const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
         
-        const updatedFields = {}; // begin fresh field collection
-        
-
-        if (!currentRecord || !currentRecord.fields) {
-            alert("❌ Could not load original record data. Try again.");
-            return;
-        }
-        
-        // ✅ Only add StartDate if it changed
-        if (convertedStartUTC !== originalStartUTC) {
-            updatedFields["StartDate"] = convertedStartUTC;
-        }
 
         // ✅ Manually handle radio buttons for Billable/Non Billable
         const selectedRadio = document.querySelector('input[name="billable-status"]:checked');
@@ -1510,17 +1582,15 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("📤 Billable Field Value:", updatedFields[billableField]);
         
 
+    
         
-        // ✅ Only add EndDate if it changed
-        if (convertedEndUTC !== originalEndUTC) {
-            updatedFields["EndDate"] = convertedEndUTC;
-        }
         const inputs = document.querySelectorAll("input:not([disabled]), textarea:not([disabled]), select:not([disabled])");
 
         inputs.forEach(input => {
             const fieldName = input.getAttribute("data-field");
             if (!fieldName) return;
         
+            // skip billable-status handled separately
             if (input.name === "billable-status") return;
         
             let value = input.value.trim();
@@ -1528,10 +1598,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (input.type === "checkbox") {
                 value = input.checked;
             } else if (input.tagName === "SELECT") {
-                if (value === "") return; // ⛔️ Skip sending if select is empty
-                value = value;
-            }
-            else if (input.type === "number") {
+                if (value === "") return;
+            } else if (input.type === "number") {
                 value = value === "" || isNaN(value) ? null : parseFloat(value);
             } else if (input.type === "date") {
                 value = formatDateToISO(value);
@@ -1539,14 +1607,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 value = value === "" ? null : value;
             }
         
-            updatedFields[fieldName] = value;
+            // 🛑 Compare with original to decide if it’s actually changed
+            const originalValue = recordData?.fields?.[fieldName];
+        
+            const isCheckbox = input.type === "checkbox";
+            const isDifferent = isCheckbox
+                ? Boolean(originalValue) !== Boolean(value)
+                : String(originalValue ?? "") !== String(value ?? "");
+        
+            if (isDifferent) {
+                updatedFields[fieldName] = value;
+            }
         });
         
-        
-        
-        
-                
-
+    
         // Clean empty strings to nulls (avoid Airtable errors)
         for (let key in updatedFields) {
             const value = updatedFields[key];
@@ -1571,14 +1645,33 @@ document.addEventListener("DOMContentLoaded", () => {
             // ✅ Update Airtable with cleaned values
             await updateAirtableRecord(window.env.AIRTABLE_TABLE_NAME, warrantyId, updatedFields);
             window.scrollTo({ top: scrollPosition, behavior: "instant" });
-
+            Object.keys(updatedFields).forEach(field => {
+                const input = document.querySelector(`[data-field="${field}"]`);
+                if (input) {
+                    input.style.outline = "2px solid darkgreen";
+                    input.style.outlineOffset = "2px";
+                    if (input.type === "checkbox") {
+                        input.style.boxShadow = "0 0 0 2px darkgreen";
+                    } else {
+                        input.style.outline = "2px solid darkgreen";
+                        input.style.outlineOffset = "2px";
+                    }
+                    
+            
+                    // Optional: remove highlight after 5 seconds
+                    setTimeout(() => {
+                        input.style.outline = "";
+                        input.style.outlineOffset = "";
+                    }, 5000);
+                }
+            });
             console.log("✅ Airtable record updated successfully.");
             console.log("🕔 UTC Sent to Airtable:", new Date(document.getElementById("StartDate").value).toISOString());
 
-            showToast("✅ Job details saved successfully!", "success");
     
            // ✅ Refresh UI after save to reflect correct date format
            await new Promise(resolve => setTimeout(resolve, 3000)); // ⏳ wait 3 seconds for automation
+           recordData = await fetchAirtableRecord(window.env.AIRTABLE_TABLE_NAME, warrantyId);
 
            console.log("🔄 Fetching updated data from Airtable...");
            const updatedData = await fetchAirtableRecord(window.env.AIRTABLE_TABLE_NAME, warrantyId);
@@ -1622,9 +1715,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function showToast(message, type = "success") {
+        const jobName = document.getElementById("job-name")?.value?.trim();
+    
+        // ❌ Suppress error toast only if job name is missing
+        if (!jobName && type === "error") {
+            console.warn("🚫 Error toast suppressed because job name is missing.");
+            return;
+        }
+    
         let toast = document.getElementById("toast-message");
     
-        // Create toast element if it doesn’t exist
         if (!toast) {
             toast = document.createElement("div");
             toast.id = "toast-message";
@@ -1632,17 +1732,16 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(toast);
         }
     
-        toast.textContent = message;
+        toast.innerHTML = message.replace(/\n/g, "<br>");
         toast.classList.add("show");
-    
-        // Add different styles for error and success
         toast.style.background = type === "error" ? "rgba(200, 0, 0, 0.85)" : "rgba(0, 128, 0, 0.85)";
     
-        // Hide toast after 3 seconds
         setTimeout(() => {
             toast.classList.remove("show");
-        }, 3000);
+        }, 20000); // 20 seconds
     }
+    
+    
      
    // 🔹 Fetch Dropbox Token from Airtable
 async function fetchDropboxToken() {
@@ -2159,6 +2258,52 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
         
     // ✅ Call this function when the page loads
     document.addEventListener('DOMContentLoaded', populateSubcontractorDropdown);
+
+    const fieldOriginalValues = {};
+
+document.querySelectorAll('input[data-field], textarea[data-field], select[data-field]').forEach(input => {
+    const field = input.getAttribute('data-field');
+    let value;
+
+    if (input.type === 'checkbox') {
+        value = input.checked;
+    } else {
+        value = input.value;
+    }
+
+    fieldOriginalValues[field] = value;
+
+    // Track changes on blur (losing focus)
+    input.addEventListener("blur", () => {
+        let newValue = input.type === 'checkbox' ? input.checked : input.value;
+
+        if (newValue !== fieldOriginalValues[field]) {
+            input.style.outline = "2px solid darkgreen";
+            input.style.outlineOffset = "2px";
+        } else {
+            input.style.outline = "";
+            input.style.outlineOffset = "";
+        }
+    });
+});
+
+['change', 'input'].forEach(evtType => {
+    document.querySelectorAll('select[data-field], input[type="checkbox"][data-field]').forEach(input => {
+        input.addEventListener(evtType, () => {
+            const field = input.getAttribute('data-field');
+            const value = input.type === "checkbox" ? input.checked : input.value;
+
+            if (value !== fieldOriginalValues[field]) {
+                input.style.outline = "2px solid darkgreen";
+                input.style.outlineOffset = "2px";
+            } else {
+                input.style.outline = "";
+                input.style.outlineOffset = "";
+            }
+        });
+    });
+});
+
 
     function setInputValue(id, value) {
         const element = document.getElementById(id);
