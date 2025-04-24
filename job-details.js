@@ -904,8 +904,11 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             "upload-issue-picture-label",
             "field-tech-reviewed-label",
             "materials-needed-container",
-            "material-needed-container" // 👈 added this
-          ].forEach(hideElementById);
+            "upload-issue-picture",
+            "trigger-issue-upload", // 👈 add this
+            "material-needed-container"
+        ].forEach(hideElementById);
+        
           
           
           
