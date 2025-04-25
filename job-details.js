@@ -1741,7 +1741,7 @@ if (originalEndMs !== currentEndMs) {
     
         setTimeout(() => {
             toast.classList.remove("show");
-        }, 20000); // 20 seconds
+        }, 8000); // 20 seconds
     }
     
     
