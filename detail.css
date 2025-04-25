@@ -106,12 +106,14 @@ nav a.back-button:hover {
     text-decoration: underline;
 }
 .scrollable-content {
-    margin-top: 10px; /* Adjust for fixed nav */
-    height: calc(100vh - 10px); /* Adjust for viewport height */
-    overflow-y: auto;
+    margin-top: 10px;
+    overflow-y: visible; /* 👈 let body scroll */
     padding: 10px;
+    padding-bottom: 120px; /* Keep bottom padding */
     box-sizing: border-box;
 }
+
+
 
 input[type="date"] {
     width: fit-content;
