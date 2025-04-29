@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Details</title>
+    <title>Warranty</title>
     <link rel="stylesheet" href="detail.css">
 </head>
 <body>
@@ -24,12 +24,12 @@
             
             <label for="warranty-id">Warranty ID</label>
             <input type="text" id="warranty-id" readonly>
-
             <label for="StartDate">Start Date</label>
-            <input type="datetime-local" id="StartDate" name="StartDate" >
+            <input type="datetime-local" id="StartDate" name="StartDate">
             
             <label for="EndDate">End Date</label>
-            <input type="datetime-local" id="EndDate" name="EndDate"  >
+            <input type="datetime-local" id="EndDate" name="EndDate">
+            
             
             <label>Address:</label>
             <div style="display: flex; align-items: center; justify-content: left; gap: 10px;">
@@ -54,6 +54,7 @@
                     onmouseout="this.style.backgroundColor='#f8f9fa'; this.style.boxShadow='0px 4px 8px rgba(0, 0, 0, 0.1)'; this.style.transform='scale(1)';"
                     placeholder="Click for Directions">
             </div>
+            <br>
             <label>Homeowner Name:</label>
             <input type="text" id="homeowner-name" readonly>
 
@@ -70,9 +71,6 @@
            min-height: 80px; resize: vertical; display: block;"
     autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"></textarea>
 
-
-          <hr>
-
 <label id="subcontractor-dropdown1-label" for="subcontractor-dropdown1">Select a Subcontractor:</label>
 <select id="subcontractor-dropdown" data-field="Subcontractor">
     <option value="">Select a Subcontractor...</option>
@@ -86,9 +84,7 @@
 <br>
 
     <label for="subcontractor-payment">Subcontractor Payment</label>
-    <input type="number" id="subcontractor-payment" name="subcontractor-payment" step="0.01" min="0" placeholder="$0.00" data-field="Subcontractor Payment">
-
-
+    <input type="text" id="subcontractor-payment" name="subcontractor-payment" placeholder="$0.00" data-field="Subcontractor Payment" inputmode="decimal">
 
 <div id="previewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
     background-color:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
@@ -96,8 +92,6 @@
     <span id="closePreview" style="position:absolute; top:20px; right:30px; font-size:30px; cursor:pointer; color:white;">&times;</span>
   </div>
 </div>
-
-
 
 <div id="additional-fields-container" style="padding: 16px;">
     <div class="form-group">
@@ -174,8 +168,6 @@
     </div>
 </div>
 
-   
-
         <div class="file-input-container">
          <!--   <label id="upload-issue-picture-label" class="custom-file-label" for="upload-issue-picture">
                 Upload Issue Pictures
@@ -185,11 +177,10 @@
               id="upload-issue-picture"
               multiple
               accept="image/*"
-              capture="environment"
               style="display: none;"
             >
             <button id="trigger-issue-upload" type="button" style="margin: 10px; padding: 10px 15px; font-size: 16px;">
-              📷 Take Photo / Upload Issue Image
+               Upload Issue Image
             </button>       
                  <div id="issue-file-list"></div>
         </div>
@@ -213,11 +204,10 @@
         id="upload-completed-picture"
         multiple
         accept="image/*"
-        capture="environment"
         style="display: none;"
       >
       <button id="trigger-completed-upload" type="button" style="margin: 10px; padding: 10px 15px; font-size: 16px;">
-        📷 Take Photo / Upload Completed Image
+        upload Completed Image
       </button>        
       <div id="file-list"></div>
     </div>
@@ -289,9 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 });
-  </script>
-  
-  <script>
+
     document.getElementById("trigger-issue-upload").addEventListener("click", () => {
       document.getElementById("upload-issue-picture").click();
     });
@@ -299,11 +287,47 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("trigger-completed-upload").addEventListener("click", () => {
       document.getElementById("upload-completed-picture").click();
     });
-  </script>
-  
-  
 
-    
+    document.addEventListener("DOMContentLoaded", function () {
+    const subcontractorPaymentInput = document.getElementById("subcontractor-payment");
+
+    if (subcontractorPaymentInput) {
+        subcontractorPaymentInput.addEventListener("input", function (e) {
+            let value = e.target.value;
+
+            // 🧹 Allow user to type $ but clean extra $ if multiple
+            value = value.replace(/[^\d.]/g, ""); // remove everything except digits and decimal
+
+            // 🛡 Prevent multiple decimals
+            const parts = value.split(".");
+            if (parts.length > 2) {
+                value = parts[0] + "." + parts[1];
+            }
+
+            // 🌟 Always format with a single $
+            e.target.value = value ? `$${value}` : "";
+        });
+
+        subcontractorPaymentInput.addEventListener("blur", function (e) {
+            let value = e.target.value.replace(/[^\d.]/g, ""); // Remove $ and commas
+
+            if (value) {
+                value = parseFloat(value).toFixed(2);
+                e.target.value = `$${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            } else {
+                e.target.value = "";
+            }
+        });
+
+        subcontractorPaymentInput.addEventListener("focus", function (e) {
+            let value = e.target.value.replace(/[^\d.]/g, ""); // Remove $ when focusing
+            e.target.value = value;
+        });
+    }
+});
+
+  </script>
+      
     <script src="job-details.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 

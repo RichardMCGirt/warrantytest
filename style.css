@@ -8,7 +8,6 @@ body {
 }
 
 /* Target the "Lot Number" cells */
-/* Default for desktop */
 td[data-field="Lot Number and Community/Neighborhood"]:hover {
     transform: scale(1.05);
     transition: transform 0.2s ease-in-out;
@@ -28,7 +27,6 @@ td[data-field="Lot Number and Community/Neighborhood"]:active {
     transform: scale(1.05);
     transition: transform 0.1s ease-in-out;
 }
-
 
 #menu-toggle {
     background-color: #007bff;
@@ -64,7 +62,6 @@ td[data-field="Lot Number and Community/Neighborhood"]:active {
     max-width: 100%; /* Prevents overflowing container */
 }
 
-
 #checkbox-container.show {
     display: block; /* Show when toggled */
 }
@@ -75,7 +72,6 @@ td[data-field="Lot Number and Community/Neighborhood"]:active {
     max-height: 200px;
     overflow-y: auto;
 }
-
 
 /* Navigation Link Styles */
 .nav-link {
@@ -135,7 +131,6 @@ h2 {
     margin: 20px 0;
 }
 
-
 td {
     max-height: 100px;
 }
@@ -147,33 +142,24 @@ td {
     height: 30vh !important /* Make sure it takes full viewport */
 }
 
-/* Default style for both tables */
-.scrollable-div {
-    margin: 0 auto;
-    max-width: calc(100% - 40px); /* Set 20px margin on each side */
-    overflow-x: auto;
-    min-height: calc(100% - 95%) !important;
-}
-
 .single-table-view .scrollable-div {
-    width: calc(100% - 0px); /* Adjust to match your desired width */
-    margin: 0 auto;
-    height: auto;
-}
+        max-height: 90vh; 
+        overflow-y: auto;
+        overflow-x: auto;
+        position: relative; 
+    }
+    
 
 
 
         /* Add styles to make divs scrollable */
         .scrollable-div {
-            max-height: 2000px; /* Set a max-height for scrollable area */
-            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 90vh; /* or whatever height you want */
+            overflow-y: auto;
             overflow-x: auto;
-            position: relative; /* Required for sticky to work */
-
+            position: relative; 
         }
-
-        /* CSS for Dropbox Dropdown or other elements */
-
+        
 /* Header Styles */
 .header {
     display: flex;
@@ -289,20 +275,7 @@ button:hover {
 }
 
 /* Draggable Submit Button */
-#dynamic-submit-button {
-    width: 150px;
-    height: 50px;
-    background-color: #4caf50;
-    color: white;
-    font-size: 20px;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    cursor: move;
-    transition: background-color 0.3s ease;
-    z-index: 1000;
-    position: fixed;
-}
+
 
 /* Search Input */
 .search-container {
@@ -517,12 +490,6 @@ button:hover {
     height: 20px;
     margin-right: 10px;
 }
-
-
-    .logo {
-        width: 150px;
-        margin: 0 auto;
-    }
 
     /* Navigation */
     .nav-link {

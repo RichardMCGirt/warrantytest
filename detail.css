@@ -173,7 +173,6 @@ input[type="datetime-local"] {
     font-size: 1rem;
 }
 
-
 textarea {
     resize: vertical;
     
@@ -186,7 +185,6 @@ textarea[readonly] {
     background-color: transparent !important;
     border: none;               /* darker text for readability */
 }
-
 
 /* Address Styling */
 input#address {
@@ -204,7 +202,7 @@ input#address {
 }
 
 #subcontractor-payment {
-    width: 100%;
+    width: fit-content;
     font-size: 18px;       /* Larger font size for readability */
     padding: 14px 16px;    /* Increased padding for a better touch target */
     border: 1px solid #ccc;
