@@ -1391,16 +1391,28 @@ async function loadImagesForLot(warrantyId, status) {
         completedPicturesSection.innerHTML = hasCompletedImages ? "" : "";
 
         // If no images exist, hide sections and delete button
-        if (!hasIssueImages && !hasCompletedImages) {
-            console.warn("⚠️ No images found, hiding sections.");
-            checkAndHideDeleteButton(); // Hide delete button if no images
-            return;
-        }
+       // ...
+if (!hasIssueImages && !hasCompletedImages) {
+    console.warn("⚠️ No images found, hiding sections.");
+    checkAndHideDeleteButton();
+    return;
+}
 
-        // Display images if available
-        if (hasIssueImages) {
-            await displayImages(issueImages, "issue-pictures");
-        }
+// ✅ Only show if status allows
+if (status?.toLowerCase() === "scheduled- awaiting field") {
+    console.log("🚫 Skipping display of issue images due to status:", status);
+    // Do not show issue images
+} else if (hasIssueImages) {
+    await displayImages(issueImages, "issue-pictures");
+}
+
+
+if (hasCompletedImages) {
+    await displayImages(completedImages, "completed-pictures");
+}
+
+
+
         if (hasCompletedImages) {
             await displayImages(completedImages, "completed-pictures");
         }
@@ -1494,11 +1506,9 @@ document.addEventListener("DOMContentLoaded", () => {
           setTimeout(() => {
             const input = document.getElementById("upload-completed-picture");
             const label = document.querySelector("label[for='upload-completed-picture']");
-            const container = document.getElementById("file-input-container");
         
             if (input) input.style.setProperty("display", "none", "important");
             if (label) label.style.setProperty("display", "none", "important");
-            if (container) container.style.setProperty("display", "none", "important");
         }, 500);
         
     });
