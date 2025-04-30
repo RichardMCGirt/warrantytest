@@ -960,7 +960,7 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             hideParentFormGroup("field-tech-reviewed");
         }
         
-    } else {
+    } else if (job["Status"] !== "Scheduled- Awaiting Field") {
         showElement("job-completed-container");
     }
 
