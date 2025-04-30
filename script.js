@@ -215,9 +215,26 @@ document.addEventListener("DOMContentLoaded", function () {
             } while (offset);
     
             allRecords.forEach(record => {
-                const managerId = record.fields['Field Manager Assigned']?.[0];
-                record.displayFieldManager = managerId && fieldManagerMap[managerId] ? fieldManagerMap[managerId] : 'Unknown';
+                const techField = record.fields['field tech'];
+                if (techField) {
+                    const names = techField
+                        .split(',')
+                        .map(n => n.trim())
+                        .sort((a, b) => a.localeCompare(b)); // Alphabetical order
+            
+                    record.normalizedTechName = names.join(', ');
+                } else {
+                    record.normalizedTechName = '';
+                }
             });
+            
+            
+            // ✅ Sort by field tech to make mergeTableCells work correctly
+            allRecords.sort((a, b) => {
+                return (a.normalizedTechName || '').localeCompare(b.normalizedTechName || '');
+            });
+            
+            
     
             // Count records by status
             const fieldTechReviewNeededCount = allRecords.filter(record => record.fields['Status'] === 'Field Tech Review Needed').length;
@@ -503,28 +520,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentCell = row.cells[columnIndex];
     
             if (!currentCell) {
-                console.warn(`⚠️ No cell found at column ${columnIndex} in row ${index + 1}`);
+                console.warn(`⚠️ No cell at column ${columnIndex} in row ${index + 1}`);
                 return;
             }
     
-            if (lastCell && lastCell.textContent.trim() === currentCell.textContent.trim()) {
-                rowspanCount++;
-                lastCell.rowSpan = rowspanCount;
-                currentCell.style.display = "none"; // Hide duplicate cell
-            } else {
-                if (rowGroupStart) {
-                    rowGroupStart.classList.add("merged-group-start"); // Mark first row in a merged group
+            const currText = currentCell.textContent.trim().split(',').map(n => n.trim()).sort().join(', ');
+    
+            if (lastCell) {
+                const prevText = lastCell.textContent.trim().split(',').map(n => n.trim()).sort().join(', ');
+    
+                if (prevText === currText) {
+                    rowspanCount++;
+                    lastCell.rowSpan = rowspanCount;
+                    currentCell.style.display = "none"; // Hide duplicate cell
+                    return;
                 }
-                lastCell = currentCell;
-                rowspanCount = 1;
-                rowGroupStart = row; // Track first row in this new group
             }
+    
+            // Start new merge group
+            if (rowGroupStart) {
+                rowGroupStart.classList.add("merged-group-start");
+            }
+    
+            lastCell = currentCell;
+            rowspanCount = 1;
+            rowGroupStart = row;
         });
     
         if (rowGroupStart) {
-            rowGroupStart.classList.add("merged-group-start"); // Ensure the last group is marked
+            rowGroupStart.classList.add("merged-group-start"); // Final group
         }
     }
+    
     
     
     
@@ -653,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
        
     
             const fieldConfigs = isSecondary ? [
-                { field: 'field tech', value: fields['field tech'] || '' },
+                { field: 'field tech', value: record.normalizedTechName || fields['field tech'] || '' },
                 {
                     field: 'Lot Number and Community/Neighborhood',
                     value: fields['Lot Number and Community/Neighborhood'] || 'N/A',
@@ -661,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 { field: 'b', value: fields['b'] || '', hidden: true } // 👈 Add this
             ] : [
-                { field: 'field tech', value: fields['field tech'] || '' },
+                { field: 'field tech', value: record.normalizedTechName || fields['field tech'] || '' },
                 {
                     field: 'Lot Number and Community/Neighborhood',
                     value: fields['Lot Number and Community/Neighborhood'] || 'N/A',

@@ -1,6 +1,5 @@
 let dropboxRefreshToken = null;
 
-
 function openMapApp() {
     const addressInput = document.getElementById("address");
 
@@ -62,9 +61,6 @@ function openMapApp() {
     });
 }
 
-
-
-
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("🚀 Page Loaded: JavaScript execution started!");
     let primaryData = null; // <-- Declare it globally within this function
@@ -109,17 +105,41 @@ document.addEventListener("DOMContentLoaded", async function () {
         // ✅ Fetch Primary Job Details
         console.log("📋 Primary Data Fetched:", primaryData);
 
-     
+           // ✅ Populate UI with Primary Fields
+populatePrimaryFields(primaryData.fields);
+const lotName = primaryData.fields["Lot Number and Community/Neighborhood"];
+const statusRaw = primaryData.fields["Status"];
+const status = (statusRaw || "").trim().toLowerCase();
+const warrantyId = primaryData.fields["Warranty Record ID"];
 
-        // ✅ Populate UI with Primary Fields
-        populatePrimaryFields(primaryData.fields);
-        const lotName = primaryData.fields["Lot Number and Community/Neighborhood"];
-        const status = primaryData.fields["Status"];
-        const warrantyId = primaryData.fields["Warranty Record ID"];
+const redirectStatuses = [
+    "pending review",
+    "customer review needed",
+    "material purchase needed",
+    "subcontractor to pay",
+    "ready to invoice",
+    "completed",
+    "confirmed"
+];
 
-        await loadImagesForLot(warrantyId, status).then(() => {
-                    checkAndHideDeleteButton();
-        });
+const noLongerNeedsFieldTech = ![
+    "field tech review needed",
+    "scheduled awaiting field technician",
+    "scheduled- awaiting field"
+].includes(status);
+
+if (redirectStatuses.includes(status) || noLongerNeedsFieldTech) {
+    showToast(`📦 ${lotName} status is "${statusRaw}". Redirecting...`, "success");
+    setTimeout(() => {
+        window.location.href = "index.html";
+    }, 2000);
+    return;
+}
+
+await loadImagesForLot(warrantyId, statusRaw).then(() => {
+    checkAndHideDeleteButton();
+});
+
         
         // ✅ Fetch Subcontractors Based on `b` Value and Populate Dropdown
         let resolvedRecordId = recordId;
@@ -1474,9 +1494,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${hours}:${minutes} ${ampm}`;
     }
     
-
-    
-
     document.getElementById("save-job").addEventListener("click", async function () {
         const scrollPosition = window.scrollY; // ✅ Add this as your first line
 
@@ -1632,21 +1649,35 @@ if (subcontractorPaymentInput) {
                console.log("📩 Reloading checkboxes with updated Airtable data:", updatedData);
                await populatePrimaryFields(updatedData.fields);
            
-               const status = updatedData.fields["Status"];
-               const lotName = updatedData.fields["Lot Number and Community/Neighborhood"] || "This job";
+               const statusRaw = updatedData.fields["Status"];
+               const status = (statusRaw || "").trim().toLowerCase();
+                              const lotName = updatedData.fields["Lot Number and Community/Neighborhood"] || "This job";
            
-               if (status === "Material Purchase Needed") {
-                   console.log("🔁 Status changed to 'Material Purchase Needed'. Redirecting...");
-                   
-                   // ✅ Show toast before redirect
-                   showToast(`📦 ${lotName} has moved to 'Material Purchase Needed' status. Redirecting...`, "success");
-           
-                   // Add a short delay so the user sees the toast
-                   setTimeout(() => {
-                       window.location.href = "index.html";
-                   }, 2000); // 2 second delay
-                   return;
-               }
+                              const redirectStatuses = [
+                                "pending review",
+                                "customer review needed",
+                                "material purchase needed",
+                                "subcontractor to pay",
+                                "ready to invoice",
+                                "completed",
+                                "confirmed"
+                            ];
+                            
+                            const noLongerNeedsFieldTech = ![
+                                "field tech review needed",
+                                "scheduled awaiting field technician",
+                                "scheduled- awaiting field"
+                            ].includes(status);
+                            
+                            if (redirectStatuses.includes(status) || noLongerNeedsFieldTech) {
+                                showToast(`📦 ${lotName} status updated to "${statusRaw}". Redirecting...`, "success");
+                                setTimeout(() => {
+                                    window.location.href = "index.html";
+                                }, 2000);
+                                return;
+                            }
+                            
+            
            }
         } catch (error) {
             console.error("❌ Error updating Airtable:", error);
