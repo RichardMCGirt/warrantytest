@@ -129,12 +129,27 @@ const noLongerNeedsFieldTech = ![
 ].includes(status);
 
 if (redirectStatuses.includes(status) || noLongerNeedsFieldTech) {
-    showToast(`📦 ${lotName} status is "${statusRaw}". Redirecting...`, "success");
-    setTimeout(() => {
+    const fieldTechName = primaryData.fields["field tech"] || "Field Tech";
+    showToast(`📦 ${lotName} status updated to "${statusRaw}" by ${fieldTechName}. Redirecting...`, "success", 6000);
+
+    const redirectTimer = setTimeout(() => {
         window.location.href = "index.html";
-    }, 2000);
+    }, 6000);
+
+    // Cancel redirect if toast is dismissed early
+    document.addEventListener("click", function handleClickAway(event) {
+        const toast = document.getElementById("toast-message");
+        if (toast && !toast.contains(event.target)) {
+            clearTimeout(redirectTimer);
+            toast.classList.remove("show");
+            document.removeEventListener("click", handleClickAway);
+            console.log("🚫 Redirect canceled by user.");
+        }
+    });
+
     return;
 }
+
 
 await loadImagesForLot(warrantyId, statusRaw).then(() => {
     checkAndHideDeleteButton();
@@ -1670,12 +1685,14 @@ if (subcontractorPaymentInput) {
                             ].includes(status);
                             
                             if (redirectStatuses.includes(status) || noLongerNeedsFieldTech) {
-                                showToast(`📦 ${lotName} status updated to "${statusRaw}". Redirecting...`, "success");
+                                const fieldTechName = primaryData.fields["field tech"] || "Field Tech";
+                                showToast(`📦 ${lotName} status updated to "${statusRaw}" by ${fieldTechName}. Redirecting...`, "success", 6000);
                                 setTimeout(() => {
                                     window.location.href = "index.html";
-                                }, 2000);
+                                }, 6000);
                                 return;
                             }
+                            
                             
             
            }
@@ -1697,7 +1714,7 @@ if (subcontractorPaymentInput) {
         return dateObj.toISOString().split("T")[0]; // Convert to 'YYYY-MM-DD'
     }
     
-    function showToast(message, type = "success") {
+    function showToast(message, type = "success", duration = 3000) {
         let toast = document.getElementById("toast-message");
     
         // Create toast element if it doesn’t exist
@@ -1711,14 +1728,31 @@ if (subcontractorPaymentInput) {
         toast.textContent = message;
         toast.classList.add("show");
     
-        // Add different styles for error and success
-        toast.style.background = type === "error" ? "rgba(200, 0, 0, 0.85)" : "rgba(0, 128, 0, 0.85)";
+        toast.style.background = type === "error"
+            ? "rgba(200, 0, 0, 0.85)"
+            : "rgba(0, 128, 0, 0.85)";
     
-        // Hide toast after 3 seconds
+        // Remove any existing click handler to prevent duplicates
+        document.removeEventListener("click", toastClickAwayHandler);
+    
+        // Add click-away dismiss logic
+        function toastClickAwayHandler(e) {
+            if (!toast.contains(e.target)) {
+                toast.classList.remove("show");
+                document.removeEventListener("click", toastClickAwayHandler);
+            }
+        }
+    
+        document.addEventListener("click", toastClickAwayHandler);
+    
+        // Auto-hide after duration
         setTimeout(() => {
             toast.classList.remove("show");
-        }, 3000);
+            document.removeEventListener("click", toastClickAwayHandler);
+        }, duration);
     }
+    
+    
      
    // 🔹 Fetch Dropbox Token from Airtable
 async function fetchDropboxToken() {
