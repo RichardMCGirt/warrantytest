@@ -872,8 +872,8 @@ if (materialsTextarea && materialSelect && textareaContainer) {
     adjustTextareaSize("materials-needed");
 
     if (job["Status"] === "Scheduled- Awaiting Field") {
-        console.log("🚨 Job is 'Scheduled - Awaiting Field' - Deleting completed images...");
-
+        console.log("🚨 Job is 'Scheduled - Awaiting Field' - Hiding upload elements...");
+    
         [
             "billable-status",
             "homeowner-builder",
@@ -889,8 +889,17 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             "upload-issue-picture-label",
             "field-tech-reviewed-label",
             "materials-needed-container",
-            "material-needed-container" // 👈 added this
-          ].forEach(hideElementById);
+            "material-needed-container",
+            "issue-pictures",                // ✅ hide the display container
+            "upload-issue-picture",         // ✅ hide the actual input
+            "trigger-issue-upload",         // ✅ hide the button
+            "issue-file-list"               // ✅ hide uploaded file list
+            // 🚫 DO NOT hide "file-input-container" here
+        ].forEach(hideElementById);
+    
+    
+    
+    
           
           
           
