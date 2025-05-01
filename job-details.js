@@ -150,7 +150,6 @@ if (redirectStatuses.includes(status) || noLongerNeedsFieldTech) {
     return;
 }
 
-
 await loadImagesForLot(warrantyId, statusRaw).then(() => {
     checkAndHideDeleteButton();
 });
@@ -262,9 +261,6 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
         // Apply subcontractor logic on load
         toggleSubcontractorField();
 
-     
-        
-        
         console.log("🎯 Subcontractor logic fully integrated!");
         
         /** ✅ Add Event Listener for Save Button **/
@@ -281,7 +277,6 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
               }
             }
           
-
             console.log("💾 Save button clicked!");
             const warrantyId = getWarrantyId(); // <-- ensure this is defined BELOW getWarrantyId()
             if (!warrantyId) {
@@ -294,7 +289,6 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
             }
         
             try {
-
                 // 🔄 Get the original record from Airtable to compare datetime values
                 const recordData = await fetchAirtableRecord(window.env.AIRTABLE_TABLE_NAME, warrantyId);
 
@@ -342,7 +336,6 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                     "Field Tech Reviewed": document.getElementById("field-tech-reviewed").checked,
                     "Job Completed": document.getElementById("job-completed").checked,
              //       "Material Not Needed": document.getElementById("material-not-needed").checked,
-
                 };
         
                 // ✅ Add dates only if they changed
@@ -367,7 +360,6 @@ if (subcontractorCheckbox.checked) {
 } else if (selectedSub !== "") {
     jobData["Subcontractor"] = selectedSub;
 }
-
         
                 console.log("📤 Sending updated fields to Airtable:", jobData);
                 console.log("🔎 Sending Billable value:", updatedFields["Billable/ Non Billable"]);
@@ -407,9 +399,12 @@ if (subcontractorCheckbox.checked) {
             console.log("🔍 Raw status:", status);
             console.log("🔍 Normalized status:", normalizedStatus);
         
-            const shouldHideCompleted = 
-                normalizedStatus === "scheduled- awaiting field" ||
-                normalizedStatus === "scheduled awaiting field";
+            const shouldHideCompleted = [
+                "scheduled- awaiting field",
+                "scheduled awaiting field",
+                "field tech review needed"
+            ].includes(normalizedStatus);
+            
         
             const elementsToToggle = [
                 "completed-pictures",
@@ -542,7 +537,6 @@ if (subcontractorCheckbox.checked) {
         }
       });
       
-
     const labels = document.querySelectorAll('.billable-label');
     let lastSelectedBillable = null;
     
@@ -592,10 +586,6 @@ if (subcontractorCheckbox.checked) {
         });
     });
     
-    
-    
-    
-    // 🔹 Fetch Airtable Record Function
     async function fetchAirtableRecord(tableName, lotNameOrRecordId) {
         console.log("📡 Fetching record for:", lotNameOrRecordId);
     
@@ -606,7 +596,6 @@ if (subcontractorCheckbox.checked) {
     
         let recordId = lotNameOrRecordId;
     
-        // ✅ Check if the given `lotNameOrRecordId` is already an Airtable record ID
         if (!recordId.startsWith("rec")) {
             console.log("🔍 Searching for Record ID using Lot Name...");
             recordId = await getRecordIdByWarrantyId(recordId);
@@ -617,7 +606,6 @@ if (subcontractorCheckbox.checked) {
             }
         }
     
-        // ✅ Use Record ID to fetch data
         const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/${tableName}/${recordId}`;
         console.log("🔗 Airtable API Request:", url);
     
@@ -636,7 +624,7 @@ if (subcontractorCheckbox.checked) {
     
             if (data.fields && !data.fields["Completed  Pictures"]) {
                 console.warn("⚠️ 'Completed  Pictures' field is missing. Initializing as empty array.");
-                data.fields["Completed  Pictures"] = []; // Prevent undefined errors
+                data.fields["Completed  Pictures"] = []; 
             }
     
             return data;
@@ -648,8 +636,7 @@ if (subcontractorCheckbox.checked) {
 
     async function getRecordIdByWarrantyId(warrantyId) {
         
-        // Step 1️⃣ Try exact match
-        const filterFormula = `{Warranty Record ID} = "${warrantyId}"`;
+    const filterFormula = `{Warranty Record ID} = "${warrantyId}"`;
     const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/${window.env.AIRTABLE_TABLE_NAME}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=1`;
     console.log("🔎 Airtable Filter Formula:", filterFormula);
     console.log("🌐 Request URL:", url);
@@ -680,7 +667,6 @@ if (subcontractorCheckbox.checked) {
         const saveButton = document.getElementById("save-job");
         if (saveButton) saveButton.disabled = true;
     
-        // 🚫 Check for internet connectivity before proceeding
         if (!navigator.onLine) {
             console.error("❌ No internet connection detected.");
             showToast("❌ You are offline. Please check your internet connection and try again.", "error");
@@ -702,7 +688,6 @@ if (subcontractorCheckbox.checked) {
                 recordId = resolvedId;
             }
             
-    
             const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/${tableName}/${recordId}`;
             console.log("📡 Sending API Request to Airtable:", url);
             console.log("🔎 Verifying field values before sending...");
@@ -724,7 +709,6 @@ const sanitizedFields = Object.fromEntries(
     body: JSON.stringify({ fields: sanitizedFields })
   });
   
-
   if (!response.ok) {
     let errorDetails;
     try {
@@ -748,9 +732,6 @@ const sanitizedFields = Object.fromEntries(
     showToast(`❌ Airtable error: ${errorDetails.error?.message || 'Unknown error'}`, "error");
     return;
 }
-
-
-    
             console.log("✅ Airtable record updated successfully:", fields);
             showToast("✅ Record updated successfully!", "success");
     
@@ -795,7 +776,6 @@ async function populatePrimaryFields(job) {
         return value === undefined || value === null ? "" : value;
     }
     setInputValue("warranty-id", job["Warranty Record ID"]);
-
     setInputValue("job-name", safeValue(job["Lot Number and Community/Neighborhood"]));
     setInputValue("field-tech", safeValue(job["field tech"]));
     setInputValue("address", safeValue(job["Address"]));
@@ -890,19 +870,11 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             "field-tech-reviewed-label",
             "materials-needed-container",
             "material-needed-container",
-            "issue-pictures",                // ✅ hide the display container
-            "upload-issue-picture",         // ✅ hide the actual input
-            "trigger-issue-upload",         // ✅ hide the button
-            "issue-file-list"               // ✅ hide uploaded file list
-            // 🚫 DO NOT hide "file-input-container" here
+            "issue-pictures",                
+            "upload-issue-picture",         
+            "trigger-issue-upload",         
+            "issue-file-list"              
         ].forEach(hideElementById);
-    
-    
-    
-    
-          
-          
-          
           if (job["Status"] !== "Field Tech Review Needed") {
             hideParentFormGroup("field-tech-reviewed");
         }
@@ -941,9 +913,7 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             }
             
         });
-        
-
-                setInputValue("homeowner-builder", safeValue(job["Homeowner Builder pay"]));
+        setInputValue("homeowner-builder", safeValue(job["Homeowner Builder pay"]));
         setInputValue("billable-reason", safeValue(job["Billable Reason (If Billable)"]));
         setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"]));
         setCheckboxValue("field-tech-reviewed", job["Field Tech Reviewed"]);
@@ -1084,7 +1054,6 @@ async function displayImages(files, containerId) {
             console.error("❌ Missing 'url' field in file object:", file);
             continue;
         }
-    
         const wrapperDiv = document.createElement("div");
         wrapperDiv.classList.add("file-wrapper");
         wrapperDiv.style.display = "inline-block";
@@ -1134,8 +1103,6 @@ closePreview.addEventListener("click", () => {
     previewModal.style.display = "none";
     previewContent.innerHTML = '<span id="closePreview" style="position:absolute; top:20px; right:30px; font-size:30px; cursor:pointer; color:white;">&times;</span>';
 });
-
-
         let previewElement;
 
         if (file.type && file.type === "application/pdf") {
@@ -1350,7 +1317,6 @@ async function fetchImagesByLotName(warrantyId, imageField) {
     }
 }
 
-
 async function loadImagesForLot(warrantyId, status) {
     console.log("📡 Loading images for warrantyId:", warrantyId);
 
@@ -1390,8 +1356,6 @@ async function loadImagesForLot(warrantyId, status) {
         issuePicturesSection.innerHTML = hasIssueImages ? "" : "";
         completedPicturesSection.innerHTML = hasCompletedImages ? "" : "";
 
-        // If no images exist, hide sections and delete button
-       // ...
 if (!hasIssueImages && !hasCompletedImages) {
     console.warn("⚠️ No images found, hiding sections.");
     checkAndHideDeleteButton();
@@ -1406,12 +1370,9 @@ if (status?.toLowerCase() === "scheduled- awaiting field") {
     await displayImages(issueImages, "issue-pictures");
 }
 
-
 if (hasCompletedImages) {
     await displayImages(completedImages, "completed-pictures");
 }
-
-
 
         if (hasCompletedImages) {
             await displayImages(completedImages, "completed-pictures");
@@ -1420,7 +1381,6 @@ if (hasCompletedImages) {
         // Ensure delete button updates correctly after image load
         setTimeout(checkAndHideDeleteButton, 500);
         checkAndHideDeleteButton();
-
 
     } catch (error) {
         console.error("❌ Error loading images for lot:", lotName, error);
@@ -1469,7 +1429,6 @@ function getWarrantyId() {
     return id;
 }
 
-
 // ✅ Set the record ID on page load
 document.addEventListener("DOMContentLoaded", () => {
     let recordId = getSavedRecordId() || new URLSearchParams(window.location.search).get("id");
@@ -1512,21 +1471,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 500);
         
     });
-
-    function formatToAMPM(dateString) {
-        if (!dateString) return null;
-        const date = new Date(dateString);
-    
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-    
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-    
-        return `${hours}:${minutes} ${ampm}`;
-    }
     
     document.getElementById("save-job").addEventListener("click", async function () {
         const scrollPosition = window.scrollY; // ✅ Add this as your first line
@@ -1565,7 +1509,6 @@ if (materialSelect && materialsTextarea) {
     }
 }
 
-
         const currentRecord = await fetchAirtableRecord(airtableTableName, recordId);
         const originalStartUTC = currentRecord?.fields?.["StartDate"];
         const originalEndUTC = currentRecord?.fields?.["EndDate"];
@@ -1576,11 +1519,8 @@ if (materialSelect && materialsTextarea) {
         const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
         const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
         
-        
         const updatedFields = {}; // begin fresh field collection
         
-        
-
         if (!currentRecord || !currentRecord.fields) {
             alert("❌ Could not load original record data. Try again.");
             return;
@@ -1595,7 +1535,6 @@ if (materialSelect && materialsTextarea) {
             updatedFields["EndDate"] = convertedEndUTC;
         }
         
-
         // ✅ Manually handle radio buttons for Billable/Non Billable
         const selectedRadio = document.querySelector('input[name="billable-status"]:checked');
         const billableField = selectedRadio?.getAttribute("data-field") || "Billable/ Non Billable";
@@ -1711,9 +1650,6 @@ if (subcontractorPaymentInput) {
                                 }, 6000);
                                 return;
                             }
-                            
-                            
-            
            }
         } catch (error) {
             console.error("❌ Error updating Airtable:", error);
@@ -1771,8 +1707,6 @@ if (subcontractorPaymentInput) {
         }, duration);
     }
     
-    
-     
    // 🔹 Fetch Dropbox Token from Airtable
 async function fetchDropboxToken() {
     try {
@@ -2310,7 +2244,6 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
         }
     }
     
-    
     function setCheckboxValue(id, value) {
         const element = document.getElementById(id);
         if (element) {
@@ -2318,5 +2251,4 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
             console.log(`✅ Checkbox ${id} set to:`, element.checked);
         }
     }
-    
 });

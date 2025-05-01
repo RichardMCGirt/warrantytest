@@ -149,9 +149,6 @@ td {
         position: relative; 
     }
     
-
-
-
         /* Add styles to make divs scrollable */
         .scrollable-div {
             max-height: 90vh; /* or whatever height you want */
@@ -205,14 +202,12 @@ th, td {
     width: auto;
     font-size: 22px;
     white-space: normal;
-
 }
 
 .hidden-column {
     display: none !important;
   }
   
-
 th {
     background-color: #002244;
     color: white;
@@ -231,8 +226,6 @@ th {
 .scrollable-div {
     overflow-y: auto;
 }
-
-
 
 /* Alternate row colors */
 tbody tr:nth-child(odd) {
@@ -273,9 +266,6 @@ button:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     transform: translateY(-4px);
 }
-
-/* Draggable Submit Button */
-
 
 /* Search Input */
 .search-container {
@@ -385,7 +375,6 @@ button:hover {
     margin-right: 10px;
 }
 
-
     /* Table */
     table {
         width: 100%;
@@ -416,7 +405,6 @@ button:hover {
         height: auto;
     }
     
-
     /* Search input */
     #search-input {
         width: 90%;
@@ -579,7 +567,6 @@ button:hover {
     margin-right: 10px;
 }
 
-
     th, td {
         font-size: 15px;
         padding: 6px;
@@ -739,7 +726,6 @@ button:hover {
     height: 20px;
     margin-right: 10px;
 }
-
 
     #search-input {
         font-size: 0.8rem;
