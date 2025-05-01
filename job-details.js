@@ -401,9 +401,9 @@ if (subcontractorCheckbox.checked) {
         
             const shouldHideCompleted = [
                 "scheduled- awaiting field",
-                "scheduled awaiting field",
                 "field tech review needed"
             ].includes(normalizedStatus);
+            
             
         
             const elementsToToggle = [
