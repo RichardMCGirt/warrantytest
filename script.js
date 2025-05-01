@@ -565,10 +565,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
-        let currentColor = "#ffffff";
+        let currentColor = "#e0e0e0"; // Slightly darker starting color
         let lastMergedValue = null;
     
-        rows.forEach((row, rowIndex) => {
+        rows.forEach((row) => {
             const techCell = row.querySelector('td[data-field="field tech"]');
     
             if (!techCell) {
@@ -581,50 +581,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
             // Toggle color when the tech group changes
             if (normalizedText !== lastMergedValue) {
-                currentColor = currentColor === "#ffffff" ? "#f0f0f0" : "#ffffff";
+                currentColor = currentColor === "#e0e0e0" ? "#cfcfcf" : "#e0e0e0"; // Darker tones
                 lastMergedValue = normalizedText;
             }
     
-            // Apply color to current row
             row.style.backgroundColor = currentColor;
         });
     }
     
-    
-    // Function to ensure table data is ready before applying colors
-    async function waitForTableDataAndApplyColors(tableSelector, retries = 10) {
-        let attempt = 0;
-        let tableReady = false;
-    
-        while (attempt < retries) {
-    
-            const table = document.querySelector(tableSelector);
-            const rows = table ? table.querySelectorAll("tbody tr") : [];
-    
-            if (rows.length > 0 && rows[rows.length - 1].offsetHeight > 0) {
-                tableReady = true;
-                break;
-            }
-    
-            await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms before retrying
-            attempt++;
-        }
-    
-        if (tableReady) {
-            mergeTableCells(tableSelector, 2); // Ensure merging is done first
-            applyAlternatingRowColors(tableSelector);
-        } else {
-            console.error(`❌ Table ${tableSelector} did not finish rendering in time.`);
-        }
-    }
-    
+        
     // Ensure final table is ready before applying colors
     setTimeout(() => {
         applyAlternatingRowColors("#airtable-data");
         applyAlternatingRowColors("#feild-data");
     }, 3500);
-    
-    
     
     const labels = document.querySelectorAll('.billable-option');
 
@@ -635,8 +605,6 @@ document.addEventListener('DOMContentLoaded', () => {
         label.querySelector('input').checked = true;
       });
     });
-    
-    
     
     async function displayData(records, tableSelector, isSecondary = false) {
         const tableElement = document.querySelector(tableSelector); // Select the entire table
