@@ -552,56 +552,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    
-    
-    
     function applyAlternatingRowColors(tableSelector) {
-    
-        const rows = Array.from(document.querySelectorAll(`${tableSelector} tbody tr`));
-    
-        if (rows.length === 0) {
-            console.warn(`⚠️ No visible rows found in ${tableSelector}. Skipping color application.`);
+        const table = document.querySelector(tableSelector);
+        if (!table) {
+            console.warn(`⚠️ Table not found: ${tableSelector}`);
             return;
         }
     
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+        if (rows.length === 0) {
+            console.warn(`⚠️ No rows found in ${tableSelector}`);
+            return;
+        }
     
-        let lastColor = "#ffffff"; // Start with white
-        let previousMergedGroup = null;
+        let currentColor = "#ffffff";
+        let lastMergedValue = null;
     
-        rows.forEach((row, index) => {
-            // Check if the row is the start of a new merged group
-            const isMergedGroupStart = row.classList.contains("merged-group-start");
+        rows.forEach((row, rowIndex) => {
+            const techCell = row.querySelector('td[data-field="field tech"]');
     
-            if (isMergedGroupStart || previousMergedGroup === null) {
-                lastColor = lastColor === "#ffffff" ? "#e6e6e6" : "#ffffff"; // Alternate color only for new groups
+            if (!techCell) {
+                row.style.backgroundColor = currentColor;
+                return;
             }
     
-            // Apply color to the current row
-            row.style.backgroundColor = lastColor;
+            const normalizedText = techCell.textContent.trim().split(',')
+                .map(s => s.trim()).sort().join(', ');
     
-            // Extend color to all hidden rows (merged rows)
-            const cells = Array.from(row.cells);
-            cells.forEach(cell => {
-                if (cell.rowSpan > 1) {
-                    let nextRow = row.nextElementSibling;
-                    for (let i = 1; i < cell.rowSpan; i++) {
-                        if (nextRow) {
-                            nextRow.style.backgroundColor = lastColor;
-                            nextRow = nextRow.nextElementSibling;
-                        }
-                    }
-                }
-            });
+            // Toggle color when the tech group changes
+            if (normalizedText !== lastMergedValue) {
+                currentColor = currentColor === "#ffffff" ? "#f0f0f0" : "#ffffff";
+                lastMergedValue = normalizedText;
+            }
     
-            // Track previous merged group
-            previousMergedGroup = isMergedGroupStart ? row : previousMergedGroup;
-    
+            // Apply color to current row
+            row.style.backgroundColor = currentColor;
         });
-    
     }
-    
-    
-    
     
     
     // Function to ensure table data is ready before applying colors
@@ -633,9 +620,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Ensure final table is ready before applying colors
     setTimeout(() => {
-        waitForTableDataAndApplyColors("#airtable-data");
-        waitForTableDataAndApplyColors("#feild-data");
-    }, 3500); // Increase timeout if necessary
+        applyAlternatingRowColors("#airtable-data");
+        applyAlternatingRowColors("#feild-data");
+    }, 3500);
+    
     
     
     const labels = document.querySelectorAll('.billable-option');

@@ -409,8 +409,6 @@ if (subcontractorCheckbox.checked) {
                 shouldHideCompleted = false;
             }
             
-            
-            
             if (normalizedStatus === "scheduled awaiting field technician") {
                 console.log("✅ Forcing show for Scheduled Awaiting Field Technician");
             
@@ -431,14 +429,11 @@ if (subcontractorCheckbox.checked) {
                 "job-completed-container",
                 "job-completed",
                 "job-completed-check"
-            ];
-        
-            
+            ];  
         });
         
         console.log("🎯 Subcontractor logic fully integrated!");
         
-    
         // ✅ Fetch and Populate Subcontractor Dropdown
         await fetchAndPopulateSubcontractors(resolvedRecordId);
         
@@ -458,7 +453,6 @@ if (subcontractorCheckbox.checked) {
      //       materialsInput.style.backgroundColor = "";
     //    }
  //   });
-    
     
     async function ensureDropboxToken() {
         if (!dropboxAccessToken) {
@@ -909,7 +903,6 @@ if (materialsTextarea && materialSelect && textareaContainer) {
                     console.log("🙈 Hiding Billable Reason and Homeowner/Builder dropdowns.");
                 }
             }
-            
         });
         setInputValue("homeowner-builder", safeValue(job["Homeowner Builder pay"]));
         setInputValue("billable-reason", safeValue(job["Billable Reason (If Billable)"]));
