@@ -683,19 +683,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 { field: 'field tech', value: record.normalizedTechName || fields['field tech'] || '' },
                 {
                     field: 'Lot Number and Community/Neighborhood',
-                    value: fields['Lot Number and Community/Neighborhood'] || 'N/A',
+                    value: fields['Lot Number and Community/Neighborhood'] || fields['Street Address'] || 'N/A',
                     jobDetailsLink: true
                 },
-                { field: 'b', value: fields['b'] || '', hidden: true } // 👈 Add this
+                { field: 'b', value: fields['b'] || '', hidden: true }
             ] : [
                 { field: 'field tech', value: record.normalizedTechName || fields['field tech'] || '' },
                 {
                     field: 'Lot Number and Community/Neighborhood',
-                    value: fields['Lot Number and Community/Neighborhood'] || 'N/A',
+                    value: fields['Lot Number and Community/Neighborhood'] || fields['Street Address'] || 'N/A',
                     jobDetailsLink: true
                 },
-                { field: 'b', value: fields['b'] || '', hidden: true } // 👈 Add this
+                { field: 'b', value: fields['b'] || '', hidden: true }
             ];
+            
             
             fieldConfigs.forEach(config => {
                 const { field, value } = config;
