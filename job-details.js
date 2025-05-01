@@ -399,13 +399,31 @@ if (subcontractorCheckbox.checked) {
             console.log("🔍 Raw status:", status);
             console.log("🔍 Normalized status:", normalizedStatus);
         
-            const shouldHideCompleted = [
+            let shouldHideCompleted = [
                 "scheduled- awaiting field",
                 "field tech review needed"
             ].includes(normalizedStatus);
             
+            // ✅ Force override: never hide if explicitly this status
+            if (normalizedStatus === "scheduled awaiting field technician") {
+                shouldHideCompleted = false;
+            }
             
-        
+            
+            
+            if (normalizedStatus === "scheduled awaiting field technician") {
+                console.log("✅ Forcing show for Scheduled Awaiting Field Technician");
+            
+                [
+                    "job-completed-container",
+                    "job-completed",
+                    "job-completed-check",
+                    "upload-completed-picture",
+                    "completed-pictures-heading",
+                    "completed-pictures"
+                ].forEach(showElement);
+            }
+            
             const elementsToToggle = [
                 "completed-pictures",
                 "upload-completed-picture",
@@ -415,27 +433,7 @@ if (subcontractorCheckbox.checked) {
                 "job-completed-check"
             ];
         
-            elementsToToggle.forEach(id => {
-                const el = document.getElementById(id);
-                if (!el) {
-                    console.warn(`⚠️ Element not found: ${id}`);
-                    return;
-                }
-        
-                if (shouldHideCompleted) {
-                    console.log(`🔒 Hiding element with ID: ${id}`);
-                    el.style.display = "none";
-                    el.style.margin = "0";
-                    el.style.padding = "0";
-                    el.style.height = "0";
-                } else {
-                    console.log(`🔓 Showing element with ID: ${id}`);
-                    el.style.display = "block";
-                    el.style.removeProperty("margin");
-                    el.style.removeProperty("padding");
-                    el.style.removeProperty("height");
-                }
-            });
+            
         });
         
         console.log("🎯 Subcontractor logic fully integrated!");
