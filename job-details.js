@@ -1,5 +1,31 @@
 let dropboxRefreshToken = null;
+function setInputValue(id, value) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.warn(`⚠️ Element with ID '${id}' not found.`);
+        return;
+    }
 
+    if (id === "subcontractor-payment") {
+        console.log("💰 Setting subcontractor-payment with:", value);
+        if (value === undefined || value === null || value === "") {
+            element.value = "";
+        } else {
+            const numberValue = parseFloat(value);
+            if (!isNaN(numberValue)) {
+                element.value = `$${numberValue.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+            } else {
+                element.value = "";
+            }
+        }
+        return;
+    }
+
+    element.value = value || "";
+}
 function openMapApp() {
     const addressInput = document.getElementById("address");
 
@@ -244,16 +270,9 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
         });
 
         // Initialize subcontractor checkbox and dropdown state from job data
-        function setInputValue(fieldId, value) {
-            const inputElement = document.getElementById(fieldId);
-            if (inputElement) {
-                if (inputElement.type === "checkbox") {
-                    inputElement.checked = !!value;
-                } else {
-                    inputElement.value = value;
-                }
-            }
-        }
+  
+        
+        
 
         // Set initial checkbox state from job data
         setCheckboxValue("sub-not-needed", primaryData.fields["Subcontractor Not Needed"]);
@@ -338,6 +357,15 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
              //       "Material Not Needed": document.getElementById("material-not-needed").checked,
                 };
         
+// ✅ Safely parse Subcontractor Payment input
+const paymentInput = document.getElementById("subcontractor-payment");
+let paymentValue = paymentInput?.value?.replace(/[^0-9.]/g, ""); // Strip $ and commas
+paymentValue = parseFloat(paymentValue);
+if (!isNaN(paymentValue)) {
+    jobData["Subcontractor Payment"] = paymentValue;
+}
+
+
                 // ✅ Add dates only if they changed
                 if (convertedStartAMPM !== originalStartUTC) {
                     jobData["StartDate"] = convertedStartAMPM;
@@ -781,6 +809,8 @@ async function populatePrimaryFields(job) {
     setInputValue("StartDate", convertUTCToLocalInput(job["StartDate"]));
     setInputValue("EndDate", convertUTCToLocalInput(job["EndDate"]));
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
+    setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"])); // ✅ moved here
+
   //  setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
   setTimeout(() => {
     const materialsTextarea = document.getElementById("materials-needed");
@@ -906,7 +936,8 @@ if (materialsTextarea && materialSelect && textareaContainer) {
         });
         setInputValue("homeowner-builder", safeValue(job["Homeowner Builder pay"]));
         setInputValue("billable-reason", safeValue(job["Billable Reason (If Billable)"]));
-        setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"]));
+        console.log("🧪 Subcontractor Payment Raw Value:", job["Subcontractor Payment"]);
+        console.log("🔍 Calling setInputValue for 'subcontractor-payment'");
         setCheckboxValue("field-tech-reviewed", job["Field Tech Reviewed"]);
     }
 
@@ -2212,28 +2243,7 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
     // ✅ Call this function when the page loads
     document.addEventListener('DOMContentLoaded', populateSubcontractorDropdown);
 
-    function setInputValue(id, value) {
-        const element = document.getElementById(id);
-        if (!element) {
-            console.warn(`⚠️ Element with ID '${id}' not found.`);
-            return;
-        }
-    
-        if (id === "subcontractor-payment") {
-            if (value === undefined || value === null || value === "") {
-                element.value = "";
-            } else {
-                const numberValue = parseFloat(value);
-                if (!isNaN(numberValue)) {
-                    element.value = `$${numberValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                } else {
-                    element.value = "";
-                }
-            }
-        } else {
-            element.value = value || "";
-        }
-    }
+
     
     function setCheckboxValue(id, value) {
         const element = document.getElementById(id);
