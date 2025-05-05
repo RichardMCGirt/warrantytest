@@ -151,10 +151,8 @@ td {
     
         /* Add styles to make divs scrollable */
         .scrollable-div {
-            max-height: 90vh; /* or whatever height you want */
-            overflow-y: auto;
-            overflow-x: auto;
-            position: relative; 
+            max-height: none !important;
+            overflow: visible !important;
         }
         
 /* Header Styles */
@@ -394,9 +392,8 @@ button:hover {
     
     /* Default style for both tables */
     .scrollable-div {
-        margin: 0 auto;
-        max-width: calc(100% - 40px); /* Set 20px margin on each side */
-        overflow-x: auto;
+        max-height: none !important;
+        overflow: visible !important;
     }
     
     .single-table-view .scrollable-div {
@@ -737,5 +734,16 @@ button:hover {
     .scrollable-div {
         max-height: none !important;
         overflow: visible !important;
+    }
+}
+
+.scrollable-div::after {
+    content: '';
+    display: block;
+    height: 80px; /* space from bottom */
+}
+@media (max-width: 768px) {
+    .scrollable-div::after {
+        height: 120px;
     }
 }
