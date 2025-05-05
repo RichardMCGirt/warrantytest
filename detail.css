@@ -661,3 +661,12 @@ button:hover {
 
     }
 }
+
+.readonly-field {
+    background-color: #f9f9f9;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 20px;
+  }
+  
