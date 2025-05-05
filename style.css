@@ -387,14 +387,22 @@ button:hover {
         display: flex;
         flex-direction: column;
         align-items: stretch; /* Stretch container to fit */
-        height: 30vh !important /* Make sure it takes full viewport */
+        height: 30vh !important; /* Make sure it takes full viewport */
+        margin: 0 auto; /* ✅ center horizontally */
+
     }
     
     /* Default style for both tables */
     .scrollable-div {
         max-height: none !important;
         overflow: visible !important;
+        
     }
+
+    html {
+        scroll-behavior: smooth;
+      }
+      
     
     .single-table-view .scrollable-div {
         width: calc(100% - 0px); /* Adjust to match your desired width */
@@ -749,4 +757,19 @@ button:hover {
     .scrollable-div::after {
         height: 60px;
     }
+}
+.jump-link {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 8px 12px;
+    background-color: #003366;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.jump-link:hover {
+    background-color: #002244;
 }
