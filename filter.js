@@ -71,21 +71,42 @@ document.getElementById('search-input').addEventListener('input', function () {
         const h2 = table.closest('.scrollable-div')?.previousElementSibling;
 
         let visibleCount = 0;
+        const uniqueTechs = new Set();
 
         rows.forEach(row => {
             const cells = Array.from(row.querySelectorAll('td'));
             const rowMatches = cells.some(cell => cell.textContent.toLowerCase().includes(searchValue));
 
             row.style.display = rowMatches ? '' : 'none';
-            if (rowMatches) visibleCount++;
+
+            if (rowMatches) {
+                visibleCount++;
+                const techCell = row.querySelector('td:nth-child(1)');
+                if (techCell) {
+                    uniqueTechs.add(techCell.textContent.trim());
+                }
+            }
         });
 
-        // Show or hide table, header, and heading based on visibility
+        // Show/hide the entire table section
         table.style.display = visibleCount > 0 ? 'table' : 'none';
         if (thead) thead.style.display = visibleCount > 0 ? 'table-header-group' : 'none';
         if (h2) h2.style.display = visibleCount > 0 ? 'block' : 'none';
+
+        const hideTechColumn = uniqueTechs.size <= 1;
+
+        // Hide or show TH in column 1
+        const ths = table.querySelectorAll('thead th');
+        if (ths[0]) ths[0].style.display = hideTechColumn ? 'none' : '';
+
+        // Hide or show TDs in column 1
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells[0]) cells[0].style.display = hideTechColumn ? 'none' : '';
+        });
     });
 });
+
 
 
 
