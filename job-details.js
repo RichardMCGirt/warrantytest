@@ -284,7 +284,9 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
 
         // Set initial checkbox state from job data
         setCheckboxValue("sub-not-needed", primaryData.fields["Subcontractor Not Needed"]);
-
+        setTimeout(() => {
+            toggleSubcontractorField();
+        }, 50);
         // Apply subcontractor logic on load
         toggleSubcontractorField();
 
@@ -794,7 +796,26 @@ const sanitizedFields = Object.fromEntries(
             window.location.href = url.toString();
         });
     });
-
+    document.addEventListener("DOMContentLoaded", function () {
+        const subcontractorDropdown = document.getElementById("subcontractor-dropdown");
+        const paymentContainer = document.getElementById("subcontractor-payment-container");
+        const subNotNeededCheckbox = document.getElementById("sub-not-needed");
+    
+        subcontractorDropdown.addEventListener("change", function () {
+            const selectedValue = subcontractorDropdown.value.trim().toLowerCase();
+    
+            if (selectedValue === "sub not needed") {
+                // Hide payment input and check the box
+                paymentContainer.style.display = "none";
+                if (subNotNeededCheckbox) subNotNeededCheckbox.checked = true;
+            } else {
+                // Show payment input and uncheck the box
+                paymentContainer.style.display = "";
+                if (subNotNeededCheckbox) subNotNeededCheckbox.checked = false;
+            }
+        });
+    });
+    
     async function fetchSubcontractorNameById(recordId) {
         const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/tbl9SgC5wUi2TQuF7/${recordId}`;
       
@@ -836,7 +857,15 @@ async function populatePrimaryFields(job) {
     setInputValue("StartDate", convertUTCToLocalInput(job["StartDate"]));
     setInputValue("EndDate", convertUTCToLocalInput(job["EndDate"]));
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
-    setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"])); // ✅ moved here
+    setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"])); 
+
+    const subNotNeededCheckbox = document.getElementById("sub-not-needed");
+if (subNotNeededCheckbox) {
+    const isChecked = !!job["Subcontractor Not Needed"];
+    subNotNeededCheckbox.checked = isChecked;
+    console.log("📦 Subcontractor Not Needed (fetched):", isChecked);
+}
+
 
     document.getElementById("original-subcontractor").textContent = job["Original Subcontractor"] || "";
     const originalSubElement = document.getElementById("original-subcontractor");
@@ -1601,14 +1630,20 @@ if (materialSelect && materialsTextarea) {
         
         const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
         const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
+
+        const subNotNeededCheckbox = document.getElementById("sub-not-needed");
+const subcontractorNotNeeded = subNotNeededCheckbox?.checked || false;
         
         const updatedFields = {}; // begin fresh field collection
+
+
         
         if (!currentRecord || !currentRecord.fields) {
             alert("❌ Could not load original record data. Try again.");
             return;
         }
-        
+        updatedFields["Subcontractor Not Needed"] = subcontractorNotNeeded;
+
         // ✅ Only add StartDate if it changed
         if (convertedStartUTC !== originalStartUTC) {
             updatedFields["StartDate"] = convertedStartUTC;
@@ -1641,6 +1676,8 @@ if (subcontractorPaymentInput) {
         const inputs = document.querySelectorAll("input:not([disabled]), textarea:not([disabled]), select:not([disabled])");
 
         inputs.forEach(input => {
+
+
             const fieldName = input.getAttribute("data-field");
             if (!fieldName) return;
         
@@ -2237,7 +2274,20 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
     
     document.getElementById("subcontractor-dropdown").addEventListener("change", function () {
         console.log("📌 Subcontractor Selected:", this.value);
+    
+        // Hide subcontractor payment container
+        const paymentContainer = document.getElementById("subcontractor-payment-container");
+        if (paymentContainer) {
+            paymentContainer.style.display = "none";
+        }
+    
+        // Check the "Subcontractor Not Needed" checkbox
+        const subNotNeededCheckbox = document.getElementById("sub-not-needed");
+        if (subNotNeededCheckbox) {
+            subNotNeededCheckbox.checked = true;
+        }
     });
+    
         
     function populateSubcontractorDropdown(subcontractors, currentSelection = "") {
         console.log("📌 Populating the subcontractor dropdown...");
