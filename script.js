@@ -134,19 +134,27 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
+        // ✅ Skip scrollability on small screens
+        if (window.innerWidth <= 768) {
+            table.parentElement.style.maxHeight = 'none';
+            table.parentElement.style.overflowY = 'visible';
+            return;
+        }
+    
         const nav = document.querySelector('nav');
         const header = document.querySelector('.header');
         const searchContainer = document.querySelector('.search-container');
     
-        const headerHeight = 
+        const headerHeight =
             (nav ? nav.offsetHeight : 0) +
             (header ? header.offsetHeight : 0) +
             (searchContainer ? searchContainer.offsetHeight : 0) +
-            50; // Add some padding
+            50;
     
         table.parentElement.style.maxHeight = `calc(100vh - ${headerHeight}px)`;
         table.parentElement.style.overflowY = 'auto';
     }
+    
     
     // Reset scrollability for tables when both are visible
     function resetTableScroll(tableSelector) {
