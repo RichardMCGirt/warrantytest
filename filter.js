@@ -58,7 +58,6 @@ function resetTableMerges(tableSelector) {
     });
 }
 
-
 document.getElementById('search-input').addEventListener('input', function () {
     const searchValue = this.value.toLowerCase();
 
