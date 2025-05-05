@@ -1031,7 +1031,7 @@ if (materialsTextarea && materialSelect && textareaContainer) {
         setCheckboxValue("field-tech-reviewed", job["Field Tech Reviewed"]);
     }
 
-    setCheckboxValue("job-completed", job["Job Completed"]);
+    setCheckboxValue("job-completed-checkbox", job["Job Completed"]);
 
     if (job["Status"] === "Field Tech Review Needed") {
         console.log("🚨 Field Tech Review Needed - Hiding completed job elements.");
