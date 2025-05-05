@@ -831,49 +831,37 @@ async function populatePrimaryFields(job) {
     setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"])); // ✅ moved here
 
     document.getElementById("original-subcontractor").textContent = job["Original Subcontractor"] || "";
-    document.getElementById("original-subcontractor-phone").textContent = job["Original Subcontractor Phone Number"] || "";
-
-    if (job["Original Subcontractor"]?.length) {
-        fetchSubcontractorNameById(job["Original Subcontractor"][0]).then(name => {
-          document.getElementById("original-subcontractor").textContent = name;
-        });
-      } else {
-        document.getElementById("original-subcontractor").textContent = "";
-      }
-      
-      // 🔎 Handle Original Subcontractor Display
-const originalSubElement = document.getElementById("original-subcontractor");
+    const originalSubElement = document.getElementById("original-subcontractor");
 const originalSubContainer = originalSubElement?.parentElement;
-const originalPhoneElement = document.getElementById("original-subcontractor-phone");
-const originalPhoneContainer = originalPhoneElement?.parentElement;
 
-// Check if it's a valid lookup array
-const originalSub = job["Original Subcontractor"];
-if (Array.isArray(originalSub) && originalSub.length > 0) {
-    const originalSubId = originalSub[0];
-    fetchSubcontractorNameById(originalSubId).then(name => {
-        if (name) {
-            originalSubElement.textContent = name;
-            originalSubContainer.style.display = "";
-        } else {
-            originalSubElement.textContent = "";
-            originalSubContainer.style.display = "none";
-        }
-    });
-} else {
-    originalSubElement.textContent = "";
-    originalSubContainer.style.display = "none";
-}
-
-// 🔧 Handle Original Subcontractor Phone Number
 const originalPhone = job["Original Subcontractor Phone Number"];
-if (originalPhone) {
-    originalPhoneElement.textContent = originalPhone;
-    originalPhoneContainer.style.display = "";
+const originalSub = job["Original Subcontractor"];
+
+if (Array.isArray(originalSub) && originalSub.length > 0) {
+  const originalSubId = originalSub[0];
+
+  fetchSubcontractorNameById(originalSubId).then(name => {
+    if (name && originalPhone) {
+      originalSubElement.textContent = name;
+      originalSubElement.onclick = () => {
+        console.log(`📞 Calling ${originalPhone}...`);
+        window.location.href = `tel:${originalPhone}`;
+      };
+      originalSubContainer.style.display = "";
+    } else {
+      originalSubElement.textContent = "";
+      originalSubElement.onclick = null;
+      originalSubContainer.style.display = "none";
+    }
+  });
 } else {
-    originalPhoneElement.textContent = "";
-    originalPhoneContainer.style.display = "none";
+  originalSubElement.textContent = "";
+  originalSubElement.onclick = null;
+  originalSubContainer.style.display = "none";
 }
+
+
+
 
   
   //  setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
