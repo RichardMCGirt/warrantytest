@@ -379,7 +379,7 @@ button:hover {
     }
 
     th, td {
-        font-size: 25px !important;
+        font-size: 20px !important;
         padding: 6px;
     }
 
@@ -755,7 +755,7 @@ button:hover {
 }
 @media (max-width: 768px) {
     .scrollable-div::after {
-        height: 60px;
+        height: 20px;
     }
 }
 .jump-link {

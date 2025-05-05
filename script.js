@@ -48,6 +48,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000); // Adjust timeout based on data load speed
 });
 
+function showLoader() {
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'flex';
+}
+
+function hideLoader() {
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'none';
+}
+
+
     async function fetchAirtableFields() {
         const url = `https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}?maxRecords=1`;
     
@@ -191,6 +202,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     async function fetchAllData() {
+
+        showLoader(); // 👈 Show loader at the start
+        mainContent.style.display = 'none';
+        secondaryContent.style.display = 'none';
         mainContent.style.display = 'none';
         secondaryContent.style.display = 'none';
     
@@ -267,21 +282,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 300);
     
             mainContent.style.display = 'block';
-            secondaryContent.style.display = 'block';
-            setTimeout(() => {
-                mainContent.style.opacity = '1';
-                secondaryContent.style.opacity = '1';
-            }, 10);
-        } catch (error) {
-            console.error("🚨 Error in fetchAllData:", {
-                function: "fetchAllData",
-                status: error.response ? error.response.status : "Unknown",
-                statusText: error.response ? error.response.statusText : "Unknown",
-                details: error.message || "No message available",
-                stackTrace: error.stack || "No stack trace available"
-            });
-        }
+        secondaryContent.style.display = 'block';
+        setTimeout(() => {
+            mainContent.style.opacity = '1';
+            secondaryContent.style.opacity = '1';
+        }, 10);
+    } catch (error) {
+        console.error("🚨 Error in fetchAllData:", error);
+    } finally {
+        hideLoader(); // 👈 Always hide loader after attempt
     }
+}
     
     async function filterAndSortRecords(records, status, isSecondary) {
       
@@ -722,4 +733,4 @@ document.getElementById('search-input').addEventListener('input', function () {
 fetchAllData();
 
   
-  }); // 👈 this closes the top-level DOMContentLoaded
+  });
