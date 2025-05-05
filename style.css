@@ -734,16 +734,19 @@ button:hover {
     .scrollable-div {
         max-height: none !important;
         overflow: visible !important;
+        width: 90% !important;
+        margin: 0 auto; /* ✅ center horizontally */
     }
 }
+
 
 .scrollable-div::after {
     content: '';
     display: block;
-    height: 80px; /* space from bottom */
+    height: 40px; /* space from bottom */
 }
 @media (max-width: 768px) {
     .scrollable-div::after {
-        height: 120px;
+        height: 60px;
     }
 }
