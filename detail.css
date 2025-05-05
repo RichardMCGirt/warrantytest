@@ -679,4 +679,7 @@ button:hover {
   .clickable-call:hover {
     color: #0056b3;
   }
+  #subcontractor-payment-container {
+    transition: all 0.2s ease;
+  }
   

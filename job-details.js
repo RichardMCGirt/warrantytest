@@ -224,14 +224,19 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
             const input = document.getElementById("subcontractor-dropdown");
             const datalist = document.getElementById("subcontractor-options");
             const checkbox = document.getElementById("sub-not-needed");
+            const paymentContainer = document.getElementById("subcontractor-payment-container");
+            const paymentInput = document.getElementById("subcontractor-payment");
         
-            if (!input || !checkbox || !datalist) return;
+            if (!input || !checkbox || !datalist || !paymentContainer || !paymentInput) return;
         
             if (checkbox.checked) {
                 input.value = "Sub Not Needed";
                 input.setAttribute("readonly", "true");
                 input.style.pointerEvents = "none";
                 input.style.background = "#e9ecef";
+        
+                paymentContainer.style.display = "none";
+                paymentInput.value = "Sub Not Needed"; // Set value to match logic
         
                 // 🔁 Add "Sub Not Needed" to datalist if missing
                 const exists = Array.from(datalist.options).some(opt => opt.value === "Sub Not Needed");
@@ -241,14 +246,17 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                     option.label = "Sub Not Needed (Manual Entry)";
                     datalist.appendChild(option);
                 }
-        
             } else {
                 input.value = "";
                 input.removeAttribute("readonly");
                 input.style.pointerEvents = "auto";
                 input.style.background = "";
+        
+                paymentContainer.style.display = "block";
+                paymentInput.value = ""; // Clear when re-enabled
             }
         }
+        
         
         function checkImagesVisibility() {
             const images = document.querySelectorAll(".image-container img"); // Adjust selector if needed
