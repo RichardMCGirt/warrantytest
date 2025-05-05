@@ -73,38 +73,20 @@ document.getElementById('search-input').addEventListener('input', function () {
         let visibleCount = 0;
 
         rows.forEach(row => {
-            const column2 = row.querySelector('td:nth-child(2)');
-            const column3 = row.querySelector('td:nth-child(3)');
-            const match = column2 && column2.textContent.toLowerCase().includes(searchValue);
+            const cells = Array.from(row.querySelectorAll('td'));
+            const rowMatches = cells.some(cell => cell.textContent.toLowerCase().includes(searchValue));
 
-            row.style.display = match ? '' : 'none';
-
-            // 🔧 Hide column 3 if searching
-            if (column3) {
-                column3.style.display = searchValue ? 'none' : '';
-            }
-
-            if (match) visibleCount++;
+            row.style.display = rowMatches ? '' : 'none';
+            if (rowMatches) visibleCount++;
         });
 
-        // 🔍 Hide column 3 header too
-        const th3 = thead?.querySelector('th:nth-child(3)');
-        if (th3) {
-            th3.style.display = searchValue ? 'none' : '';
-        }
-
-        // 🔍 Hide or show section based on visible row count
-        if (visibleCount === 0) {
-            table.style.display = 'none';
-            if (thead) thead.style.display = 'none';
-            if (h2) h2.style.display = 'none';
-        } else {
-            table.style.display = 'table';
-            if (thead) thead.style.display = 'table-header-group';
-            if (h2) h2.style.display = 'block';
-        }
+        // Show or hide table, header, and heading based on visibility
+        table.style.display = visibleCount > 0 ? 'table' : 'none';
+        if (thead) thead.style.display = visibleCount > 0 ? 'table-header-group' : 'none';
+        if (h2) h2.style.display = visibleCount > 0 ? 'block' : 'none';
     });
 });
+
 
 
 
