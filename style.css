@@ -732,3 +732,10 @@ button:hover {
         padding: 6px;
     }
 }
+
+@media screen and (max-width: 768px) {
+    .scrollable-div {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
