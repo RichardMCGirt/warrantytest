@@ -661,14 +661,15 @@ button:hover {
 
     }
 }
-
-.readonly-field {
-    /* Your existing styles (e.g., gray text) */
-    background-color: transparent;
-    pointer-events: auto;  /* ✅ Make sure this isn't set to 'none' */
-    cursor: pointer;       /* 👈 Optional, shows it's clickable */
-    width: fit-content;
+#original-sub-container label {
+    margin-bottom: 10px;
   }
+
+  #original-subcontractor {
+    display: inline-block;
+    font-weight: bold;
+  }
+
   .clickable-call {
     color: #007bff;
     text-decoration: underline;
