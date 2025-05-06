@@ -8,24 +8,30 @@ function setInputValue(id, value) {
 
     if (id === "subcontractor-payment") {
         console.log("💰 Setting subcontractor-payment with:", value);
-        if (value === undefined || value === null || value === "") {
-            element.value = "";
+
+        // Show raw string (like "Sub Not Needed")
+        if (typeof value === "string" && isNaN(parseFloat(value))) {
+            element.value = value;
+            return;
+        }
+
+        // Format number as currency
+        const numberValue = parseFloat(value);
+        if (!isNaN(numberValue)) {
+            element.value = `$${numberValue.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
         } else {
-            const numberValue = parseFloat(value);
-            if (!isNaN(numberValue)) {
-                element.value = `$${numberValue.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })}`;
-            } else {
-                element.value = "";
-            }
+            element.value = "";
         }
         return;
     }
 
+    // Default case
     element.value = value || "";
 }
+
 function openMapApp() {
     const addressInput = document.getElementById("address");
 
@@ -859,6 +865,17 @@ async function populatePrimaryFields(job) {
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
     setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"])); 
 
+
+
+  // HIDE the job completed container if Status is "Field Tech Review Needed"
+  const jobCompletedContainer = document.querySelector(".job-completed-container");
+  if (job["Status"] === "Field Tech Review Needed") {
+    jobCompletedContainer.style.display = "none";
+  } else {
+    jobCompletedContainer.style.display = "block";
+  }
+
+
     const subNotNeededCheckbox = document.getElementById("sub-not-needed");
 if (subNotNeededCheckbox) {
     const isChecked = !!job["Subcontractor Not Needed"];
@@ -984,7 +1001,8 @@ if (materialsTextarea && materialSelect && textareaContainer) {
             "material-needed-container",
             "issue-pictures",                
             "upload-issue-picture",         
-            "trigger-issue-upload",         
+            "trigger-issue-upload", 
+        
             "issue-file-list"              
         ].forEach(hideElementById);
           if (job["Status"] !== "Field Tech Review Needed") {
@@ -1033,27 +1051,20 @@ if (materialsTextarea && materialSelect && textareaContainer) {
 
     setCheckboxValue("job-completed-checkbox", job["Job Completed"]);
 
-    if (job["Status"] === "Field Tech Review Needed") {
-        console.log("🚨 Field Tech Review Needed - Hiding completed job elements.");
-    
-        // Hide specified elements
-        [
-            "completed-pictures",
-            "upload-completed-picture",
-            "completed-pictures-heading",
-            "file-input-container",
-            "job-completed-container",
-            "job-completed",
-            "job-completed-check"
-        ].forEach(hideElementById);
-
-        if (job["Status"] !== "Field Tech Review Needed") {
-            hideParentFormGroup("field-tech-reviewed");
-        }
-        
-    } else if (job["Status"] !== "Scheduled- Awaiting Field") {
-        showElement("job-completed-container");
-    }
+    const status = (job["Status"] || "").trim().toLowerCase();
+   // 🔒 Enforce hiding of completed section if Field Tech Review Needed
+if (status === "field tech review needed") {
+    console.log("🚨 Field Tech Review Needed - Hiding completed job elements (override).");
+    [
+        "completed-pictures",
+        "upload-completed-picture",
+        "completed-pictures-heading",
+        "file-input-container",
+        "job-completed-container",
+        "job-completed",
+        "job-completed-check"
+    ].forEach(hideElementById);
+}
 
     showElement("save-job");
 }
