@@ -865,8 +865,6 @@ async function populatePrimaryFields(job) {
     setInputValue("subcontractor", safeValue(job["Subcontractor"]));
     setInputValue("subcontractor-payment", safeValue(job["Subcontractor Payment"])); 
 
-
-
   // HIDE the job completed container if Status is "Field Tech Review Needed"
   const jobCompletedContainer = document.querySelector(".job-completed-container");
   if (job["Status"] === "Field Tech Review Needed") {
@@ -875,14 +873,12 @@ async function populatePrimaryFields(job) {
     jobCompletedContainer.style.display = "block";
   }
 
-
     const subNotNeededCheckbox = document.getElementById("sub-not-needed");
 if (subNotNeededCheckbox) {
     const isChecked = !!job["Subcontractor Not Needed"];
     subNotNeededCheckbox.checked = isChecked;
     console.log("📦 Subcontractor Not Needed (fetched):", isChecked);
 }
-
 
     document.getElementById("original-subcontractor").textContent = job["Original Subcontractor"] || "";
     const originalSubElement = document.getElementById("original-subcontractor");
@@ -914,10 +910,6 @@ if (Array.isArray(originalSub) && originalSub.length > 0) {
   originalSubContainer.style.display = "none";
 }
 
-
-
-
-  
   //  setCheckboxValue("material-not-needed", job["Material Not Needed"] || false);
   setTimeout(() => {
     const materialsTextarea = document.getElementById("materials-needed");
@@ -1647,8 +1639,6 @@ const subcontractorNotNeeded = subNotNeededCheckbox?.checked || false;
         
         const updatedFields = {}; // begin fresh field collection
 
-
-        
         if (!currentRecord || !currentRecord.fields) {
             alert("❌ Could not load original record data. Try again.");
             return;
@@ -1688,7 +1678,6 @@ if (subcontractorPaymentInput) {
 
         inputs.forEach(input => {
 
-
             const fieldName = input.getAttribute("data-field");
             if (!fieldName) return;
         
@@ -1714,7 +1703,6 @@ if (subcontractorPaymentInput) {
         
             updatedFields[fieldName] = value;
         });
-        
         
         // Clean empty strings to nulls (avoid Airtable errors)
         for (let key in updatedFields) {
@@ -2299,7 +2287,6 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
         }
     });
     
-        
     function populateSubcontractorDropdown(subcontractors, currentSelection = "") {
         console.log("📌 Populating the subcontractor dropdown...");
     
@@ -2365,8 +2352,6 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
     // ✅ Call this function when the page loads
     document.addEventListener('DOMContentLoaded', populateSubcontractorDropdown);
 
-
-    
     function setCheckboxValue(id, value) {
         const element = document.getElementById(id);
         if (element) {

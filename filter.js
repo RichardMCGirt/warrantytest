@@ -46,8 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
-
 function resetTableMerges(tableSelector) {
     const rows = document.querySelectorAll(`${tableSelector} tbody tr`);
     rows.forEach(row => {
@@ -106,13 +104,6 @@ document.getElementById('search-input').addEventListener('input', function () {
     });
 });
 
-
-
-
-
-
-
-
 function extractFieldTechsFromTable() {
     const techs = new Set();
 
@@ -132,8 +123,6 @@ function extractFieldTechsFromTable() {
 
     return Array.from(techs).sort();
 }
-
-
 
 // ✅ Function to observe when table rows are added
 function observeTableData(selector) {
@@ -159,9 +148,6 @@ function observeTableData(selector) {
 
     observer.observe(targetNode, { childList: true });
 }
-
-
-
 
 // ✅ Generate Checkboxes only when menu is clicked
 function generateCheckboxes(fieldTechs) {
@@ -201,8 +187,6 @@ document.getElementById('clear-filters').addEventListener('click', () => {
     applyFilters();
 });
 
-
-
 // ✅ Ensure fetchFieldTechs is defined
 async function fetchFieldTechs() {
     const AIRTABLE_API_KEY = window.env.AIRTABLE_API_KEY;
@@ -230,9 +214,7 @@ async function fetchFieldTechs() {
                     fieldTech.split(',').forEach(name => fieldTechsFromAirtable.add(name.trim()));
                 }
             }
-        });
-
-        
+        }); 
     } catch (error) {
         console.error('❌ Error fetching field techs:', error);
     }
@@ -287,7 +269,6 @@ function filterRows() {
     });
 }
 
-
 // ✅ Function to extract Field Techs from the table dynamically
 function getFieldTechsFromTable() {
     const fieldTechsInTable = new Set();
@@ -325,7 +306,6 @@ function waitForElements(callback) {
         }
     }, 300); // ✅ Check every 300ms until checkboxes exist
 }
-
 
 // ✅ Save selected checkboxes to `localStorage`
 function saveFiltersToLocalStorage() {
@@ -367,8 +347,6 @@ function loadFiltersFromLocalStorage() {
     });
 }
 
-
-
 function applyFilters() {
     const selectedTechs = Array.from(document.querySelectorAll('.filter-checkbox:checked'))
         .map(cb => cb.value.trim().replace(/\s+/g, ' ')); // Normalize
@@ -399,10 +377,8 @@ function applyFilters() {
         if (h2) h2.style.display = visibleCount > 0 ? 'block' : 'none';
     
         console.log(`🧮 ${visibleCount} rows visible in ${selector}`);
-    });
-    
+    });  
 }
-
 
 // ✅ Function to ensure table data is loaded before filtering
 function waitForTableData(callback) {
@@ -432,7 +408,6 @@ function handleCheckboxChange(event) {
     saveFiltersToLocalStorage();
     filterRows();
 }
-
 
 function attachCheckboxListeners() {
     const checkboxes = document.querySelectorAll('.filter-checkbox');
@@ -475,7 +450,6 @@ function attachCheckboxListeners() {
 
     console.log("✅ Checkbox listeners attached.");
 }
-
 
 document.querySelectorAll('table tbody tr').forEach((row, index) => {
     if (row.cells.length !== 2) {

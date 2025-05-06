@@ -58,7 +58,6 @@ function hideLoader() {
     if (loader) loader.style.display = 'none';
 }
 
-
     async function fetchAirtableFields() {
         const url = `https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}?maxRecords=1`;
     
@@ -73,7 +72,6 @@ function hideLoader() {
                     Authorization: `Bearer ${airtableApiKey}`,
                 },
             });
-    
     
             // Check if the response was successful
             if (!response.ok) {
@@ -166,7 +164,6 @@ function hideLoader() {
         table.parentElement.style.overflowY = 'auto';
     }
     
-    
     // Reset scrollability for tables when both are visible
     function resetTableScroll(tableSelector) {
         const table = document.querySelector(tableSelector);
@@ -251,14 +248,11 @@ function hideLoader() {
                 }
             });
             
-            
             // ✅ Sort by field tech to make mergeTableCells work correctly
             allRecords.sort((a, b) => {
                 return (a.normalizedTechName || '').localeCompare(b.normalizedTechName || '');
             });
             
-            
-    
             // Count records by status
             const fieldTechReviewNeededCount = allRecords.filter(record => record.fields['Status'] === 'Field Tech Review Needed').length;
             const scheduledAwaitingFieldCount = allRecords.filter(record => record.fields['Status'] === 'Scheduled- Awaiting Field').length;
@@ -296,14 +290,11 @@ function hideLoader() {
     
     async function filterAndSortRecords(records, status, isSecondary) {
       
-    
         const filteredRecords = records.filter(record => {
             const match = record.fields['Status'] === status;
             return match;
         });
         
-    
-    
         // Ensure sorting only happens when 'displayFieldManager' exists
         const sortedRecords = filteredRecords.sort((a, b) => {
             const aField = a.displayFieldManager || "";
@@ -311,11 +302,9 @@ function hideLoader() {
             return aField.localeCompare(bField);
         });
     
-    
         return sortedRecords;
     }
     
-
     document.addEventListener("DOMContentLoaded", function () {
         const filterBranch = document.getElementById("filter-branch");
         if (filterBranch) {
@@ -358,9 +347,6 @@ function hideLoader() {
         console.log(`🧮 #feild-data visible: ${visibleF}`);
     }
     
-    
-    
-       
     async function fetchFieldManagerNames() {
         const url = `https://api.airtable.com/v0/${window.env.AIRTABLE_BASE_ID}/tblHdf9KskO1auw3l`; 
     
@@ -433,7 +419,6 @@ function hideLoader() {
         }
     }
     
-
     async function fetchDataAndInitializeFilter() {
         await fetchAllData(); // Ensure this function populates the tables
     }
@@ -607,8 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.style.backgroundColor = currentColor;
         });
     }
-    
-        
+     
     // Ensure final table is ready before applying colors
     setTimeout(() => {
         applyAlternatingRowColors("#airtable-data");
@@ -653,7 +637,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const fields = record.fields;
             const row = document.createElement('tr');
        
-    
             const fieldConfigs = isSecondary ? [
                 { field: 'field tech', value: record.normalizedTechName || fields['field tech'] || '' },
                 {
@@ -672,7 +655,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { field: 'b', value: fields['b'] || '', hidden: true }
             ];
             
-            
             fieldConfigs.forEach(config => {
                 const { field, value } = config;
                 const cell = document.createElement('td');
@@ -684,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (config.hidden) {
                     cell.style.display = 'none'; // 👻 make it invisible in the table
                 }
-                
+
                 cell.textContent = value;
         
                 row.appendChild(cell);
@@ -708,8 +690,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = `job-details.html?id=${warrantyRecordId}`; // redirect using it
                 });
             }
-            
-            
         tbody.appendChild(row);
     }); // end records.forEach
 } // ✅ END of displayData
@@ -731,6 +711,4 @@ document.getElementById('search-input').addEventListener('input', function () {
 });
 
 fetchAllData();
-
-  
   });
