@@ -26,6 +26,7 @@
             <input type="text" id="warranty-id" readonly>
             <label for="StartDate">Start Date</label>
             <input type="datetime-local" id="StartDate" name="StartDate">
+            <br>
             
             <label for="EndDate">End Date</label>
             <input type="datetime-local" id="EndDate" name="EndDate">
@@ -128,10 +129,8 @@
                 <option value=""></option>
 
             </select>
-        </div>
-        
+        </div>  
 </div>
-
 
 <div class="form-group" id="billable-reason-container" style="display: none;">
     <label for="billable-reason">Billable Reason</label>
@@ -140,8 +139,7 @@
         <option value="Homeowner Damage">Homeowner Damage</option>
         <option value="Framing Issue">Framing Issue</option>
         <option value="Weather">Weather</option>
-        <option value="builder after close repair">builder after close repair</option>
-
+        <option value="Builder after close repair">Builder after close repair</option>
         <option value=""></option>
 
     </select>
@@ -168,7 +166,7 @@
         <option value="Do Not Need Materials">Do Not Need Materials</option>
         <option value="Needs Materials">Needs Materials</option>
     </select>
-
+    <br>
     <div class="form-group" id="materials-needed-container">
         <label for="materials-needed" id="materials-needed-label">Materials Needed</label>
         <textarea id="materials-needed" name="materials-needed" data-field="Materials Needed"
@@ -257,6 +255,26 @@
            AIRTABLE_SUBCONTRACTOR_TABLE_NAME: 'tbl9SgC5wUi2TQuF7' 
         };
     </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const jobNameElement = document.getElementById("field-tech");
+          if (jobNameElement) {
+            document.getElementById("field-tech").addEventListener("click", function () {
+    const techName = document.getElementById("field-tech")?.value?.trim();
+    if (!techName) {
+        alert("⚠️ No field tech name available.");
+        return;
+    }
+    const encodedName = encodeURIComponent(techName);
+    window.location.href = `http://localhost:5501/index.html?techs=${encodedName}`;
+});
+
+          } else {
+              console.warn("⚠️ 'field-tech' element not found.");
+          }
+      });
+      </script>
+      
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const materialSelect = document.getElementById("material-needed-select");

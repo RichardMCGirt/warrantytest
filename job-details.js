@@ -364,15 +364,25 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                     "Billable/ Non Billable": selectedBillable ? selectedBillable.value : undefined,
                     "Homeowner Builder pay": document.getElementById("homeowner-builder").value,
                     "Billable Reason (If Billable)": document.getElementById("billable-reason").value,
-                    "Field Review Not Needed": document.getElementById("field-review-needed").checked,
-                    "Field Review Needed": document.getElementById("field-review-not-needed").checked,
+                    "Field Review Not Needed": document.getElementById("field-review-not-needed")?.checked || false,
+"Field Review Needed": document.getElementById("field-review-needed")?.checked || false,
+
+
                     "Subcontractor Payment": parseFloat(document.getElementById("subcontractor-payment").value) || 0,
                     "Materials Needed": document.getElementById("materials-needed").value,
-                    "Field Tech Reviewed": document.getElementById("field-tech-reviewed").checked,
-                    "Job Completed": document.getElementById("job-completed").checked,
+"Field Tech Reviewed": document.getElementById("field-tech-reviewed")?.checked || false,
+"Job Completed": document.getElementById("job-completed")?.checked || false,
              //       "Material Not Needed": document.getElementById("material-not-needed").checked,
                 };
-        
+                const fieldTechReviewedEl = document.getElementById("field-tech-reviewed");
+                const jobCompletedEl = document.getElementById("job-completed");
+                
+                if (!fieldTechReviewedEl) console.warn("⚠️ Element #field-tech-reviewed not found.");
+                if (!jobCompletedEl) console.warn("⚠️ Element #job-completed not found.");
+                
+                jobData["Field Tech Reviewed"] = fieldTechReviewedEl?.checked || false;
+                jobData["Job Completed"] = jobCompletedEl?.checked || false;
+                
 // ✅ Safely parse Subcontractor Payment input
 const paymentInput = document.getElementById("subcontractor-payment");
 let paymentValue = paymentInput?.value?.replace(/[^0-9.]/g, ""); // Strip $ and commas
@@ -425,7 +435,6 @@ if (subcontractorCheckbox.checked) {
         
             } catch (err) {
                 console.error("❌ Error saving job data:", err);
-                showToast("❌ Error saving job data. Please try again.", "error");
             }
         });
             

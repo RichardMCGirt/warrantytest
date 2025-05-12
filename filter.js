@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ✅ Load filters from URL (if present)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlTechs = urlParams.get('techs');
+    if (urlTechs) {
+        const techArray = urlTechs.split(',').map(t => t.trim());
+        localStorage.setItem("selectedFilters", JSON.stringify(techArray));
+        console.log("🌐 Loaded filters from URL:", techArray);
+    }
     const menuToggle = document.getElementById('menu-toggle');
     const checkboxContainer = document.getElementById('checkbox-container');
 
@@ -442,7 +450,8 @@ function attachCheckboxListeners() {
 
             saveFiltersToLocalStorage();
             console.log("📦 Saved selected filters to localStorage.");
-            
+            updateURLWithFilters(selected);
+
             applyFilters();
             console.log("🎯 Applied filters to the table.");
         });
@@ -450,6 +459,18 @@ function attachCheckboxListeners() {
 
     console.log("✅ Checkbox listeners attached.");
 }
+
+function updateURLWithFilters(selected) {
+    const params = new URLSearchParams(window.location.search);
+    if (selected.length > 0) {
+        params.set('techs', selected.join(','));
+    } else {
+        params.delete('techs');
+    }
+    const newURL = `${window.location.pathname}?${params.toString()}`;
+    history.replaceState(null, '', newURL);
+}
+
 
 document.querySelectorAll('table tbody tr').forEach((row, index) => {
     if (row.cells.length !== 2) {
