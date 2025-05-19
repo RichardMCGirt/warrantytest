@@ -2281,20 +2281,23 @@ async function fetchCurrentImagesFromAirtable(warrantyId, imageField) {
     }
     
     document.getElementById("subcontractor-dropdown").addEventListener("change", function () {
-        console.log("📌 Subcontractor Selected:", this.value);
+        const selectedValue = this.value.trim().toLowerCase();
+        console.log("📌 Subcontractor Selected:", selectedValue);
     
-        // Hide subcontractor payment container
         const paymentContainer = document.getElementById("subcontractor-payment-container");
-        if (paymentContainer) {
-            paymentContainer.style.display = "none";
-        }
-    
-        // Check the "Subcontractor Not Needed" checkbox
         const subNotNeededCheckbox = document.getElementById("sub-not-needed");
-        if (subNotNeededCheckbox) {
-            subNotNeededCheckbox.checked = true;
+    
+        if (selectedValue === "sub not needed") {
+            // Only check box and hide payment if value is "Sub Not Needed"
+            if (paymentContainer) paymentContainer.style.display = "none";
+            if (subNotNeededCheckbox) subNotNeededCheckbox.checked = true;
+        } else {
+            // Uncheck the box and show payment input
+            if (paymentContainer) paymentContainer.style.display = "";
+            if (subNotNeededCheckbox) subNotNeededCheckbox.checked = false;
         }
     });
+    
     
     function populateSubcontractorDropdown(subcontractors, currentSelection = "") {
         console.log("📌 Populating the subcontractor dropdown...");
