@@ -338,11 +338,12 @@ await fetchAndPopulateSubcontractors(resolvedRecordId);
                 const currentEndLocal = document.getElementById("EndDate")?.value;
                 
                 // 🔥 ADD THESE TWO LINES
-                const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
-                const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
+                const convertedStartUTC = safeToISOString(currentStartLocal);
+                const convertedEndUTC = safeToISOString(currentEndLocal);
+                
                 
         
-                const convertedStartAMPM = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
+                const convertedStartAMPM = safeToISOString(currentStartLocal);
               
                 const updatedFields = {}; // add this above all field assignments
 
@@ -506,6 +507,14 @@ if (subcontractorCheckbox.checked) {
      //       materialsInput.style.backgroundColor = "";
     //    }
  //   });
+
+ function safeToISOString(dateString) {
+    if (!dateString || typeof dateString !== "string") return null;
+    const d = new Date(dateString);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+
     
     async function ensureDropboxToken() {
         if (!dropboxAccessToken) {
@@ -1640,8 +1649,7 @@ if (materialSelect && materialsTextarea) {
         const currentStartLocal = document.getElementById("StartDate")?.value;
         const currentEndLocal = document.getElementById("EndDate")?.value;
         
-        const convertedStartUTC = currentStartLocal ? new Date(currentStartLocal).toISOString() : null;
-        const convertedEndUTC = currentEndLocal ? new Date(currentEndLocal).toISOString() : null;
+      
 
         const subNotNeededCheckbox = document.getElementById("sub-not-needed");
 const subcontractorNotNeeded = subNotNeededCheckbox?.checked || false;
@@ -1655,13 +1663,20 @@ const subcontractorNotNeeded = subNotNeededCheckbox?.checked || false;
         updatedFields["Subcontractor Not Needed"] = subcontractorNotNeeded;
 
         // ✅ Only add StartDate if it changed
-        if (convertedStartUTC !== originalStartUTC) {
+        const convertedStartUTC = safeToISOString(currentStartLocal);
+        if (convertedStartUTC && convertedStartUTC !== originalStartUTC) {
             updatedFields["StartDate"] = convertedStartUTC;
+        } else {
+            console.log("⏸ No change or empty StartDate.");
         }
         
-        if (convertedEndUTC !== originalEndUTC) {
+        const convertedEndUTC = safeToISOString(currentEndLocal);
+        if (convertedEndUTC && convertedEndUTC !== originalEndUTC) {
             updatedFields["EndDate"] = convertedEndUTC;
+        } else {
+            console.log("⏸ No change or empty EndDate.");
         }
+        
         
         // ✅ Manually handle radio buttons for Billable/Non Billable
         const selectedRadio = document.querySelector('input[name="billable-status"]:checked');
@@ -1736,8 +1751,9 @@ if (subcontractorPaymentInput) {
             window.scrollTo({ top: scrollPosition, behavior: "instant" });
 
             console.log("✅ Airtable record updated successfully.");
-            console.log("🕔 UTC Sent to Airtable:", new Date(document.getElementById("StartDate").value).toISOString());
-
+            const debugStartDate = safeToISOString(document.getElementById("StartDate")?.value);
+            console.log("🕔 UTC Sent to Airtable:", debugStartDate || "No valid StartDate");
+            
             showToast("✅ Job details saved successfully!", "success");
     
            // ✅ Refresh UI after save to reflect correct date format
